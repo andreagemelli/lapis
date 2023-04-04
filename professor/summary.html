@@ -1,0 +1,284 @@
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../css/util.css">
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
+    <!--===============================================================================================-->
+</head>
+
+<body>
+<div class="site-container">
+    <div class="site-pusher">
+
+        <header class="header" id="head">
+
+            <a href="#" class="header__icon" id="header__icon"></a>
+            <a href="#" class="header__logo">Summary</a>
+
+            <nav class="menu" id="menu">
+
+                <div id="logo"><img class="img2" src="../images/lapis/menu.png" width="70%"></div>
+                <a style="font-weight: bold;">Homepage<img src="../images/student/homepage.png" height=24px width=24px></a>
+                <a href="calendar.html">Calendar<img src="../images/professor/calendar.png" height=24px width=24px></a>
+                <a href="profile.html">Profile<img src="../images/student/user.png" height=24px width=24px></a>
+                <a href="about_us.html">Contact us<img height=24px src="../images/student/support.png" width=24px></a>
+                <a href="../logout.html">Log out<img src="../images/student/logout.png" height=24px width=24px></a>
+                <div id="footer">Version 1.0</div>
+            </nav>
+        </header>
+
+        <div class="site-content">
+            <div class="container">
+                <div class="limiter">
+                    <br>
+                    <div id="studentInfo"><h4 style="text-align: left;" class="summary">Student infos:</h4><br></div>
+
+                    <div><h7 style="color: white;">space</h7></div>
+
+                    <div id="receiptInfo"></div>
+
+                    <div><h7 style="color: white;">space</h7></div>
+
+                    <div id="buttons"></div>
+                    <br>
+
+                </div>
+            </div>
+        </div>
+        <div class="site-cache" id="site-cache"></div>
+    </div>
+</div>
+
+<script src="../js/jquery-1.11.1.js"></script>
+<script src="../js/index.js"></script>
+
+<!--===============================================================================================-->
+<script src="../vendor/jquery/jquery-3.2.1.min.js"></script>
+
+<script src="../js/main.js"></script>
+<script src="../cordova.js"></script>
+<script>
+
+    function getDateAndTime() {
+        var d = new Date();
+        var day = d.getDate();
+        if (parseInt(day) < 10){day = "0" + day;}
+        var month = parseInt(d.getMonth()) + 1;
+        if (month < 10){month = "0" + month;}
+        var year = d.getFullYear();
+        var h = d.getHours();
+        var m = d.getMinutes();
+        var s = d.getSeconds();
+        var result = year + "-" + month + "-" + day + " " + h + ":" + m + ":" + s;
+
+        return result;
+    }
+
+    function sendMessage(){
+        window.location.href = "send_message.html"
+    }
+
+    function removeReceipt(){
+        var r = confirm("Do you want remove this receipt?");
+        if (r == true) {
+            var prof_email = localStorage.getItem("email");
+            var student_email = localStorage.getItem("student_email");
+            var date_receipt = localStorage.getItem("date_receipt");
+
+            $.ajax({
+                type: 'GET',
+                url: 'http://gemelligiuntinihci.altervista.org/myPHP/professor/deleteReceipt.php',
+                crossDomain: true,
+                cache: false,
+                data: {prof_email, student_email, date_receipt},
+                success: function (data) {
+                    alert(data);
+                }
+            });
+
+            var message = "Receipt deleted";
+
+            var dayAndHour = getDateAndTime();
+
+            var date = dayAndHour.split(" ")[0];
+            var time = dayAndHour.split(" ")[1];
+
+            $.ajax({
+                type: 'GET',
+                url: 'http://gemelligiuntinihci.altervista.org/myPHP/professor/sendMessage.php',
+                crossDomain: true,
+                cache: false,
+                data: {prof_email, student_email, date, time, message},
+                success: function (data) {
+                    if(data=="failed"){
+                        alert("failed");
+                    }
+                    else{
+                        window.location.href = "homepage.html";
+                    }
+                }
+            });
+        }
+
+        return false;
+    }
+
+</script>
+
+<script>
+    $(document).ready(function () {
+
+        $.ajax({
+            type: 'GET',
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/verifySession.php',
+            crossDomain: true,
+            cache: false,
+            success: function (data) {
+                if (data == "false") {
+                    window.location.href = "../index.html";
+                }
+            }
+        });
+
+        edit(localStorage.getItem("color"));
+
+        closeApp();
+
+        var infos = window.location.search.substr(1);
+        var parts = infos.split('=', 2);
+        infos = parts[1].split(",");
+
+        var sname = infos[0].replace("%20", " ");
+        var ssurname = infos[1].replace("%20", " ");
+        var gender = infos[2].replace("%20", " ");
+        var semail = infos[3].replace("%20", " ");
+        var sfresher = infos[4].replace("%20", " ");
+        var degreeCourse = infos[5].replace("%20", " ");
+        var typeOfDegree = infos[6].replace("%20", " ");
+        var steaching = infos[7].replace("%20", " ");
+        localStorage.setItem("date_receipt", infos[8]);
+        var sdate = infos[8].split("-");
+        var stime = infos[9];
+        var notes = infos[10].replace("%20", " ");
+
+        // student informations
+
+        var prefDiv = document.createElement("div");
+        prefDiv.style.marginBottom = "25px";
+        document.getElementById("studentInfo").appendChild(prefDiv);
+
+        var left = document.createElement("div");
+        left.style.width = "30%";
+        left.style.float = "left";
+
+        prefDiv.appendChild(left);
+
+        if (gender == "m") {
+            left.innerHTML += '<img src="../images/student.png" style="vertical-align: middle;" class="img_profile" width="70%">';
+        } else {
+            left.innerHTML += '<img src="../images/girl.png" style="vertical-align: middle;" class="img_profile" width="70%">';
+        }
+
+        var namestudent = document.createElement("div");
+        namestudent.style.width = "70%";
+        namestudent.style.float = "left";
+        prefDiv.appendChild(namestudent);
+
+        var name = document.createElement("div");
+        var email = document.createElement("div");
+        var fresher = document.createElement("div");
+        var degree = document.createElement("div");
+
+        name.style.marginBottom = "5px";
+        name.innerHTML += '<img src="../images/professor/user.png" width="8%" style="vertical-align: middle;"> ' + sname + ' ' + ssurname + '<br>';
+        email.style.marginBottom = "5px";
+        email.innerHTML += '<img src="../images/professor/mail.png" width="8%" style="vertical-align: middle;"><a href="mailto:'+semail+'"> ' + semail + '</a><br>';
+        fresher.style.marginBottom = "5px";
+        fresher.innerHTML += '<img src="../images/professor/hashtag.png" width="8%" style="vertical-align: middle;"> ' + sfresher + '<br>';
+        degree.style.marginBottom = "5px";
+        degree.innerHTML += '<img src="../images/professor/univesity.png" width="8%" style="vertical-align: middle;"> ' + degreeCourse + ', ' + typeOfDegree + '<br>';
+
+
+        namestudent.appendChild(name);
+        namestudent.appendChild(email);
+        namestudent.appendChild(fresher);
+        namestudent.appendChild(degree);
+
+        // adding receipt summary
+
+        var receiptTitle = document.createElement("h4");
+        receiptTitle.style.textAlign = "left";
+        receiptTitle.className = "summary";
+        document.getElementById("receiptInfo").appendChild(receiptTitle);
+        receiptTitle.innerText = "Receipt infos:";
+
+        var secondDiv = document.createElement("div");
+        secondDiv.style.marginBottom = "25px";
+        secondDiv.style.marginTop = "25px";
+        document.getElementById("receiptInfo").appendChild(secondDiv);
+
+        var secondLeft = document.createElement("div");
+        secondLeft.style.width = "30%";
+        secondLeft.style.float = "left";
+
+        secondDiv.appendChild(secondLeft);
+        secondLeft.innerHTML += '<img src="../images/professor/calendar_summary.png" style="vertical-align: middle;" width="70%">';
+
+        var nameteaching = document.createElement("div");
+        nameteaching.style.width = "70%";
+        nameteaching.style.float = "left";
+        secondDiv.appendChild(nameteaching);
+
+        var teaching = document.createElement("div");
+        var date = document.createElement("div");
+        var time = document.createElement("div");
+        var note = document.createElement("div");
+
+        teaching.style.marginBottom = "5px";
+        teaching.innerHTML += '<img src="../images/professor/pencil.png" width="8%" style="vertical-align: middle;"> ' + steaching + '<br>';
+        date.style.marginBottom = "5px";
+        date.innerHTML += '<img src="../images/professor/day.png" width="8%" style="vertical-align: middle;"> ' + sdate[2] + '-' + sdate[1] + '-' + sdate[0] + '<br>';
+        time.style.marginBottom = "5px";
+        time.innerHTML += '<img src="../images/professor/clock.png" width="8%" style="vertical-align: middle;"> ' + stime.slice(0,-3) + '<br>';
+        note.style.marginBottom = "5px";
+        if (notes !== ""){
+            note.innerHTML += '<img src="../images/professor/notes.png" width="8%" style="vertical-align: middle;"> ' + notes + '<br>';
+        }
+
+        nameteaching.appendChild(teaching);
+        nameteaching.appendChild(date);
+        nameteaching.appendChild(time);
+        nameteaching.appendChild(note);
+
+        // buttons
+
+        var buttons = document.createElement("div");
+        buttons.style.marginBottom = "25px";
+        document.getElementById("buttons").appendChild(buttons);
+
+        var message = document.createElement("div");
+        message.style.width = "40%";
+        message.style.float = "left";
+        message.style.paddingLeft = "10%";
+
+        buttons.appendChild(message);
+        localStorage.setItem("student_name", (sname + " " + ssurname));
+        localStorage.setItem("student_email", semail);
+        message.innerHTML += '<center><button class="center-button" id="message" type="button" onclick="sendMessage()">' +
+            '<img src="../images/professor/send.png" width="30px"></button><br> <h7>Send a Message</h7></center>';
+
+        var remove = document.createElement("div");
+        remove.style.width = "40%";
+        remove.style.float = "right";
+        remove.style.paddingRight = "10%";
+
+        buttons.appendChild(remove);
+        remove.innerHTML += '<center><button class="center-button" id="remove" type="button" onclick="removeReceipt()">' +
+            '<img src="../images/bin.png" width="30px"></button><br> <h7>Remove this receipt</h7></center>';
+
+    });
+
+</script>
+
+</body>
+</html>

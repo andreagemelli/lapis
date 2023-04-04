@@ -1,0 +1,280 @@
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../css/util.css">
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
+    <!--===============================================================================================-->
+</head>
+
+<body>
+<div class="site-container">
+    <div class="site-pusher">
+
+        <header class="header" id="head">
+
+            <a href="#" class="header__icon" id="header__icon"></a>
+            <a href="calendar.html" class="header__logo">Calendar</a>
+
+            <nav class="menu" id="menu">
+
+                <div id="logo"><img class="img2" src="../images/lapis/menu.png" width="70%"></div>
+                <a href="homepage.html">Homepage<img src="../images/student/homepage.png" height=24px width=24px></a>
+                <a style="font-weight: bold;"> Calendar<img src="../images/professor/calendar.png" height=24px width=24px></a>
+                <a href="profile.html">Profile<img src="../images/student/user.png" height=24px width=24px></a>
+                <a href="about_us.html">Contact us<img height=24px src="../images/student/support.png" width=24px></a>
+                <a href="../logout.html">Log out<img src="../images/student/logout.png" height=24px width=24px></a>
+                <div id="footer">Version 1.0</div>
+
+            </nav>
+        </header>
+
+        <div class="site-content">
+            <div class="container">
+                <div class="limiter">
+                    <div class="container-login100">
+                        <div class="wrap-login100 p-t-5 p-b-5">
+                            <span class="login100-form-title p-b-15">
+                                Your Calendars
+                            </span>
+
+                            <div style="align-content: center" id="tables">
+
+                            </div>
+
+                            <br>
+                            <h4 style="text-align: center;">Add New Calendar</h4>
+                            <br>
+                            <a class="center-button" type="button" href="addCalendar/select_days.html"><img
+                                    class="center-button" src="../images/plus.png" width="30px"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="site-cache" id="site-cache"></div>
+    </div>
+</div>
+
+
+<script src="../js/jquery-1.11.1.js"></script>
+<script src="../js/index.js"></script>
+
+
+<!--===============================================================================================-->
+<script src="../vendor/jquery/jquery-3.2.1.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="../js/main.js"></script>
+<script src="../cordova.js"></script>
+<script>
+    $(document).ready(function (e) {
+        $.ajax({
+            type: 'GET',
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/verifySession.php',
+            crossDomain: true,
+            cache: false,
+            success: function (data) {
+                if (data == "false") {
+                    window.location.href = "../index.html";
+                }
+            }
+        });
+    });
+
+    edit(localStorage.getItem("color"));
+
+    closeApp();
+
+</script>
+
+<script>
+    $( document ).ready(function() {
+        var email = localStorage.getItem("email");
+        $.ajax({
+            type : 'GET',	//Request method: GET, POST
+            url : 'http://gemelligiuntinihci.altervista.org/myPHP/professor/getCalendar.php',  //Where to send the data
+            crossDomain: true,
+            cache: false,
+            data: {email},
+            success: function(data){
+                var courses = data.split("/");
+                var tables = document.getElementById("tables");
+
+                if (courses[0]=="calendarID"){
+                    tables.innerHTML += '<center><h7>No calendar found!</h7></center><br>';
+
+                    tables.innerHTML += '<center><img src="../images/professor/no_calendar.png" width="20%" </center>'
+                }
+                else {
+                    for (i = 0; i < courses.length - 1; i++){
+
+                        var days = courses[i].split("-");
+
+                        for (j = 0; j < days.length - 1; j++){
+
+                            var calendar = days[j].split(",");
+                            var teaching = calendar[0];
+
+                            if (j == 0){
+                                var receiptTitle = document.createElement("h4");
+                                receiptTitle.style.textAlign = "left";
+                                receiptTitle.className = "summary";
+                                tables.appendChild(receiptTitle);
+                                receiptTitle.innerText = teaching;
+                                tables.innerHTML += '<br>';
+                            }
+
+                            var prefDiv = document.createElement("div");
+                            prefDiv.style.marginBottom = "25px";
+                            tables.appendChild(prefDiv);
+
+
+                            var left = document.createElement("div");
+                            left.style.width = "30%";
+                            left.style.float = "left";
+
+
+
+                            var left = document.createElement("div");
+                            left.style.width = "30%";
+                            left.style.float = "left";
+
+                            prefDiv.appendChild(left);
+
+                            if (calendar[1] == '1') {
+                                calendar[1] = 'Monday';
+                                left.innerHTML += '<center><img src="../images/week/m.png" style="vertical-align: middle;" class="img_profile" width="40%"></center>';
+                            } else if (calendar[1] == '2') {
+                                calendar[1] = 'Tuesday';
+                                left.innerHTML += '<center><img src="../images/week/tu.png" style="vertical-align: middle;" class="img_profile" width="40%"><center>';
+                            } else if (calendar[1] == '3') {
+                                calendar[1] = 'Wednesday';
+                                left.innerHTML += '<center><img src="../images/week/w.png" style="vertical-align: middle;" class="img_profile" width="40%"><center>';
+                            } else if (calendar[1] == '4') {
+                                calendar[1] = 'Thursday';
+                                left.innerHTML += '<center><img src="../images/week/th.png" style="vertical-align: middle;" class="img_profile" width="40%"><center>';
+                            } else if (calendar[1] == '5') {
+                                calendar[1] = 'Friday';
+                                left.innerHTML += '<center><img src="../images/week/f.png" style="vertical-align: middle;" class="img_profile" width="40%"><center>';
+                            }
+
+                            var namestudent = document.createElement("div");
+                            namestudent.style.width = "70%";
+                            namestudent.style.float = "left";
+                            prefDiv.appendChild(namestudent);
+
+                            var name = document.createElement("div");
+                            var email = document.createElement("div");
+                            var degree = document.createElement("div");
+
+                            var hfrom = calendar[2].slice(0,-3);
+                            var hto = calendar[3].slice(0,-3);
+
+                            name.style.marginBottom = "5px";
+                            name.innerHTML += '<b> ' + calendar[1] + '</b><br>';
+                            email.style.marginBottom = "5px";
+                            email.innerHTML += '<img src="../images/professor/clock.png" width="8%" style="vertical-align: middle;"> From ' + hfrom + ' To ' + hto + '</a><br>';
+                            degree.style.marginBottom = "5px";
+                            degree.innerHTML += '<img src="../images/building.png" width="8%" style="vertical-align: middle;"> ' + calendar[4] + '<br>';
+
+
+                            namestudent.appendChild(name);
+                            namestudent.appendChild(email);
+                            namestudent.appendChild(degree);
+
+                            tables.innerHTML += '<h7 style="color: white;">space</h7>';
+
+                        }
+
+                        tables.innerHTML += '<button class="center-button" id="'+teaching+'" type="button" onclick="reject(id)"><img' +
+                            '                src="../images/bin.png" width="30px"></button><br>';
+                    }
+                }
+            }
+        });
+    });
+
+</script>
+
+<script>
+    function getDateAndTime() {
+        var d = new Date();
+        var day = d.getDate();
+        if (parseInt(day) < 10){day = "0" + day;}
+        var month = parseInt(d.getMonth()) + 1;
+        if (month < 10){month = "0" + month;}
+        var year = d.getFullYear();
+        var h = d.getHours();
+        var m = d.getMinutes();
+        var s = d.getSeconds();
+        var result = year + "-" + month + "-" + day + " " + h + ":" + m + ":" + s;
+
+        return result;
+    }
+
+    function reject(teaching){
+        var r = confirm("Do you want to delete "+teaching+"?");
+        if (r == true) {
+            var email = localStorage.getItem("email");
+
+            $.ajax({
+                type: 'GET',
+                url: 'http://gemelligiuntinihci.altervista.org/myPHP/professor/getReceipt.php',
+                crossDomain: true,
+                cache: false,
+                data: {email, teaching},
+                success: function (data) {
+                    if (data == "failed") {
+                        alert(data);
+                    } else {
+                        var emails = data.split("-");
+                        var unique_emails = Array.from(new Set(emails));
+
+                        var prof_email = email;
+                        var student_email;
+                        var dayAndHour = getDateAndTime();
+                        var date = dayAndHour.split(" ")[0];
+                        var time = dayAndHour.split(" ")[1];
+                        var message = "Calendar deleted!";
+
+                        for(j = 0 ; j < unique_emails.length -1; j++){
+                            student_email = unique_emails[j];
+                            $.ajax({
+                                type: 'GET',
+                                url: 'http://gemelligiuntinihci.altervista.org/myPHP/professor/sendMessage.php',
+                                crossDomain: true,
+                                async: false,
+                                cache: false,
+                                data: {prof_email, student_email, date, time, message},
+                                success: function (data) {
+                                    if(data=="failed"){
+                                        alert("failed");
+                                    }
+                                    else{
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }
+            });
+
+            $.ajax({
+                type: 'GET',
+                url: 'http://gemelligiuntinihci.altervista.org/myPHP/professor/deleteCalendar.php',
+                crossDomain: true,
+                cache: false,
+                data: {email, teaching},
+                success: function (data) {
+                    if (data == "failed") {
+                        alert(data);
+                    } else {
+                        window.location.href = "calendar.html";
+                    }
+                }
+            });
+        }
+    }
+</script>
+
+</body>
+</html>

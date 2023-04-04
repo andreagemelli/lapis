@@ -1,0 +1,271 @@
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../../css/util.css">
+    <link rel="stylesheet" type="text/css" href="../../css/main.css">
+
+    <!--===============================================================================================-->
+</head>
+
+<body>
+<div class="site-container">
+    <div class="site-pusher">
+
+        <header class="header">
+
+
+            <a href="#" class="header__logo">New Calendar</a>
+
+
+        </header>
+        <div class="site-content">
+            <div class="container">
+                <div class="limiter">
+                    <div class="container-login100">
+                        <div class="wrap-login100 p-t-5 p-b-5">
+                            <form class="login100-form validate-form">
+                                        <span class="login100-form-title p-b-15">
+                                            New Calendar
+                                            <h4>Insert details for every day selected</h4>
+                                        </span>
+                                <div id="daysDetails">
+
+                                </div>
+                                <div class="container-login100-form-btn m-t-30">
+                                    <button class="login100-form-btn m-t-20" id="firstbtn">
+                                        Finish !
+                                    </button>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="site-cache" id="site-cache"></div>
+    </div>
+</div>
+
+
+<script src="../../js/jquery-1.11.1.js"></script>
+<script src="../../js/index.js"></script>
+
+
+<!--===============================================================================================-->
+<script src="../../vendor/jquery/jquery-3.2.1.min.js"></script>
+
+<script src="../../js/main.js"></script>
+<script src="../../cordova.js"></script>
+<script>
+    $(document).ready(function (e) {
+        $.ajax({
+            type: 'GET',
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/verifySession.php',
+            crossDomain: true,
+            cache: false,
+            success: function (data) {
+                if (data == "false") {
+                    window.location.href = "../../index.html";
+                }
+            }
+        });
+
+        edit(localStorage.getItem("color"));
+
+        closeApp();
+    });
+
+
+    var calendar_array = localStorage.getItem("calendar_array");
+    calendar_array = calendar_array.split(",");
+    var daysOfWeek = calendar_array[1];
+
+
+    var email = localStorage.getItem("email");
+    var teaching = localStorage.setItem("teaching", calendar_array[0]);
+
+    $.ajax({
+        type: 'GET',
+        url: 'http://gemelligiuntinihci.altervista.org/myPHP/professor/getOffice.php',
+        async: false,
+        crossDomain: true,
+        cache: false,
+        data: {email},
+        success: function (data) {
+
+            var parts = data.split('-');
+            var num_office = parts.length - 1;
+            localStorage.setItem("num_office", String(num_office));
+            for (i = 0; i < daysOfWeek.length; i++) {
+
+                var day = '';
+
+                if (daysOfWeek[i] == '1') {
+                    day = 'Monday';
+                } else if (daysOfWeek[i] == '2') {
+                    day = 'Tuesday';
+                } else if (daysOfWeek[i] == '3') {
+                    day = 'Wednesday';
+                } else if (daysOfWeek[i] == '4') {
+                    day = 'Thursday';
+                } else if (daysOfWeek[i] == '5') {
+                    day = 'Friday';
+                }
+
+                var office_list = document.createElement("dl");
+                var office = '';
+
+                for (j = 0; j < parts.length - 1; j++) {
+                    var part = parts[j].split(",");
+
+                    var office_to_print = part[1] + " " + part[2] + ", Room " + part[3];
+                    var identifier = "radio" + i + j;
+                    office += '<input type="radio" name="teaching' + i + '" value="' + part[0] +
+                        '" id="' + identifier + '" class="calendar m-t-15">' +
+                        '<label for="' + identifier + '">' + office_to_print + '</label><br>';
+
+                }
+
+                office_list.innerHTML += office;
+
+                var day_section = '<h4 style = "text-decoration: underline; text-align: center;">' + day + '</h4><br>';
+                var hour = '<br><label>From: </label><input type="time" id="from' + i + '">' +
+                    '<br>' +
+
+                    '<label>Until: </label><input type="time" id="to' + i + '">';
+
+
+                /* div for each selected day*/
+                var dayDiv = document.createElement("div");
+                dayDiv.innerHTML += day_section;
+                document.getElementById("daysDetails").appendChild(dayDiv);
+
+                /* hour section*/
+                var hourDiv = document.createElement("div");
+                dayDiv.appendChild(hourDiv);
+
+                var hourImg = document.createElement("div");
+                hourImg.style.width = "40%";
+                hourImg.style.float = "left";
+                hourDiv.appendChild(hourImg);
+                hourImg.innerHTML += '<br><img src="../../images/clock.png" class="img_profile" width="30%">';
+
+                var hourContent = document.createElement("div");
+                hourContent.style.float = "left";
+                hourContent.style.width = "60%";
+                hourDiv.appendChild(hourContent);
+                hourContent.innerHTML += hour;
+
+                /*space*/
+                var space = document.createElement("br");
+                dayDiv.appendChild(space);
+
+                /* range section*/
+                var rangeDiv = document.createElement("div");
+                dayDiv.appendChild(rangeDiv);
+
+                var rangeImg = document.createElement("div");
+                rangeImg.style.width = "40%";
+                rangeImg.style.float = "left";
+                rangeDiv.appendChild(rangeImg);
+                rangeImg.innerHTML += '<br><img src="../../images/user.png" class="img_profile" width="30%">';
+
+                var rangeContent = document.createElement("div");
+                rangeContent.style.width = "60%";
+                rangeContent.style.float = "left";
+                rangeDiv.appendChild(rangeContent);
+                rangeContent.innerHTML += '<br><label>Minutes for each meeting</label><br><input id="range' + i + '" type="number" placeholder="min">';
+
+                /*space*/
+                var space = document.createElement("br");
+                dayDiv.appendChild(space);
+
+                /* office section*/
+                var officeDiv = document.createElement("div");
+                dayDiv.appendChild(officeDiv);
+
+                var officeImg = document.createElement("div");
+                officeImg.style.width = "40%";
+                officeImg.style.float = "left";
+                officeDiv.appendChild(officeImg);
+                officeImg.innerHTML += '<br><img src="../../images/building.png" width="30%">';
+
+                var officeContent = document.createElement("div");
+                officeContent.style.width = "60%";
+                officeContent.style.float = "left";
+                officeDiv.appendChild(officeContent);
+                officeContent.appendChild(office_list);
+
+                document.getElementById("daysDetails").innerHTML += '<h7 style="color: white;">space</h7>';
+            }
+        }
+    });
+
+    $("#firstbtn").click(function () {
+
+        var email = localStorage.getItem("email");
+        var teaching = localStorage.getItem("teaching");
+        var calendar_array = localStorage.getItem("calendar_array");
+        calendar_array = calendar_array.split(",");
+        var daysOfWeek = calendar_array[1];
+        var num_office = localStorage.getItem("num_office");
+
+        for (i = 0; i < daysOfWeek.length; i++) {
+            var hfrom = document.getElementById("from" + i).value;
+            var hto = document.getElementById("to" + i).value;
+            var range = parseInt(document.getElementById("range" + i).value);
+            var officeID = '';
+            for (j = 0; j < parseInt(num_office); j++) {
+                if (document.getElementById("radio" + i + j).checked) {
+                    officeID = parseInt(document.getElementById("radio" + i + j).value);
+                }
+            }
+
+            var day = parseInt(daysOfWeek[i]);
+
+            var time_from = hfrom.split(":");
+            var time_to = hto.split(":");
+
+            if (parseInt(time_from[0]) < 8 || parseInt(time_to[0]) > 20){
+                alert("Receipts must be between 8:00 and 20:00");
+                window.location.href = "fill_days.html";
+
+            } else if (parseInt(time_from[0]) > parseInt(time_to[0]) ||
+                (parseInt(time_from[0]) === parseInt(time_to[0]) && parseInt(time_from[1]) >= parseInt(time_to[1]))){
+                alert("From must be lower than Until!");
+                window.location.href = "fill_days.html";
+
+            } else if (range < 10 || range > 60){
+                alert("Each meeting must be beetween 10 and 60 minutes!");
+                window.location.href = "fill_days.html";
+
+            } else {
+
+                $.ajax({
+
+                    type: 'GET',
+                    url: 'http://gemelligiuntinihci.altervista.org/myPHP/professor/addCalendar.php',
+                    async: false,
+                    crossDomain: true,
+                    cache: false,
+                    data: {email, teaching, day, hfrom, hto, range, officeID},
+                    success: function (data) {
+
+                        if (data == "failed") {
+                            alert("failed");
+                        }
+                    }
+                });
+            }
+        }
+        alert("Calendar Added!");
+        window.location.href = "../calendar.html";
+        return false;
+
+    });
+
+</script>
+
+</body>
+</html>

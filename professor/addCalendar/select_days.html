@@ -1,0 +1,177 @@
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../../css/util.css">
+    <link rel="stylesheet" type="text/css" href="../../css/main.css">
+    <!--===============================================================================================-->
+</head>
+
+<body>
+<div class="site-container">
+    <div class="site-pusher">
+
+        <header class="header">
+
+
+            <a href="#" class="header__logo">New Calendar</a>
+
+
+        </header>
+
+        <div class="site-content">
+            <div class="container">
+                <div class="limiter">
+                    <div class="container-login100">
+                        <div class="wrap-login100 p-t-5 p-b-5">
+                            <form class="login100-form validate-form">
+                                        <span class="login100-form-title p-b-15">
+                                            New Calendar
+                                            <h4>Select course and days</h4>
+                                        </span>
+                                <div id="selectTeaching">
+                                    <h4>Which course?</h4>
+                                </div>
+                                <br>
+                                <div>
+                                    <h4>Which days of the week?</h4>
+                                    <input type="checkbox" style="vertical-align: middle; display: inline-block;"
+                                           name="typeOfSearch" value="1" id="radio-one" class="form-radio m-b-10"><label
+                                        for="radio-one">Monday</label>
+                                    <br>
+                                    <input type="checkbox" style="vertical-align: middle; display: inline-block;"
+                                           name="typeOfSearch" value="2" id="radio-two" class="form-radio m-b-10"><label
+                                        for="radio-two">Tuesday</label>
+                                    <br>
+                                    <input type="checkbox" style="vertical-align: middle; display: inline-block;"
+                                           name="typeOfSearch" value="3" id="radio-three"
+                                           class="form-radio m-b-10"><label for="radio-three">Wednesday</label>
+                                    <br>
+                                    <input type="checkbox" style="vertical-align: middle; display: inline-block;"
+                                           name="typeOfSearch" value="4" id="radio-four"
+                                           class="form-radio m-b-10"><label for="radio-four">Thursday</label>
+                                    <br>
+                                    <input type="checkbox" style="vertical-align: middle; display: inline-block;"
+                                           name="typeOfSearch" value="5" id="radio-five"
+                                           class="form-radio m-b-10"><label for="radio-five">Friday</label>
+                                    <br>
+                                </div>
+                                <div class="container-login100-form-btn m-t-30">
+                                    <button class="login100-form-btn" id="firstbtn">
+                                        Continue >
+                                    </button>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="site-cache" id="site-cache"></div>
+    </div>
+</div>
+
+
+<script src="../../js/jquery-1.11.1.js"></script>
+<script src="../../js/index.js"></script>
+
+
+<!--===============================================================================================-->
+<script src="../../vendor/jquery/jquery-3.2.1.min.js"></script>
+
+<script src="../../js/main.js"></script>
+<script src="../../cordova.js"></script>
+<script>
+    $(document).ready(function (e) {
+        $.ajax({
+            type: 'GET',
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/verifySession.php',
+            crossDomain: true,
+            cache: false,
+            success: function (data) {
+                if (data == "false") {
+                    window.location.href = "../../index.html";
+                }
+            }
+        });
+
+        edit(localStorage.getItem("color"));
+
+        closeApp();
+    });
+
+    var email = localStorage.getItem("email");
+    $.ajax({
+        type: 'GET',
+        url: 'http://gemelligiuntinihci.altervista.org/myPHP/professor/getTeaching.php',
+        crossDomain: true,
+        cache: false,
+        data: {email},
+        success: function (data) {
+            //
+            var courses = data.split('-');
+            var botton_counter = 0;
+
+            for (i = 0; i < courses.length - 1; i++) {
+                var parts = courses[i].split(',');
+                if (parts[1] != '1') {
+                    var identifier = "radio" + botton_counter++;
+                    var html = '<input type="radio" style="vertical-align: middle" name="teaching" value="' + parts[0] + '" id="' + identifier + '" class="form-radio m-b-10"><label for="radio-one">' + parts[0] + '</label><br>';
+                    document.getElementById("selectTeaching").innerHTML += html;
+                }
+            }
+
+            if (botton_counter == 0){
+                alert("Delete a calendar first!");
+                window.location.href = "../calendar.html";
+            }
+        }
+    });
+
+    $("#firstbtn").click(function () {
+        var calendar_array = [];
+        var teaching;
+
+        // more than two courses?? -> use botton_counter as global variable + for cycle
+        if (document.getElementById('radio0').checked) {
+            teaching = document.getElementById('radio0').value;
+        } else if (document.getElementById('radio1').checked) {
+            teaching = document.getElementById('radio1').value;
+        } else if (document.getElementById('radio2').checked) {
+            teaching = document.getElementById('radio2').value;
+        }
+
+        calendar_array.push(teaching);
+
+        var daysOfWeek = '';
+        if (document.getElementById('radio-one').checked) {
+            daysOfWeek += document.getElementById('radio-one').value;
+        }
+        if (document.getElementById('radio-two').checked) {
+            daysOfWeek += document.getElementById('radio-two').value;
+        }
+        if (document.getElementById('radio-three').checked) {
+            daysOfWeek += document.getElementById('radio-three').value;
+        }
+        if (document.getElementById('radio-four').checked) {
+            daysOfWeek += document.getElementById('radio-four').value;
+        }
+        if (document.getElementById('radio-five').checked) {
+            daysOfWeek += document.getElementById('radio-five').value;
+        }
+
+        calendar_array.push(daysOfWeek);
+
+        if ($.trim(teaching).length > 0 && $.trim(daysOfWeek).length > 0) {
+            localStorage.setItem("calendar_array", calendar_array);
+            window.location.href = "fill_days.html";
+        }
+        return false;
+
+    });
+
+
+</script>
+
+</body>
+</html>

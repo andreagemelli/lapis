@@ -1,0 +1,365 @@
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../css/util.css">
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
+    <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.17/themes/base/jquery-ui.css">
+    <!--===============================================================================================-->
+</head>
+
+<body>
+<div class="site-container">
+    <div class="site-pusher">
+
+        <header class="header" id="head">
+
+            <a href="#" class="header__icon" id="header__icon"></a>
+            <a href="profile.html" class="header__logo">Profile</a>
+
+            <nav class="menu" id="menu">
+
+                <div id="logo"><img class="img2" src="../images/lapis/menu.png" width="70%"></div>
+                <a href="homepage.html">Homepage<img src="../images/student/homepage.png" height=24px width=24px></a>
+                <a href="calendar.html">Calendar<img src="../images/professor/calendar.png" height=24px width=24px></a>
+                <a style="font-weight: bold;"> Profile<img src="../images/student/user.png" height=24px width=24px></a>
+                <a href="about_us.html">Contact us<img height=24px src="../images/student/support.png" width=24px></a>
+                <a href="../logout.html">Log out<img src="../images/student/logout.png" height=24px width=24px></a>
+                <div id="footer">Version 1.0</div>
+            </nav>
+        </header>
+
+        <div class="site-content">
+            <div class="container">
+                <div class="limiter" style="text-align: center;">
+                    <div id="top">
+                        <br>
+                    </div>
+                    <div id="course_tables">
+                        <img style="float: left; margin-left: 5%; margin-right: 5%;" src="../images/professor/univesity.png" width="8%"><h4 style="text-align: left; float: left;">Course</h4>
+                        <img id="delete_course" style="float: right; margin: 0% 4% 5% 0%; display: none;" src="../images/bin.png" width="7%" onclick="deleteCourse()">
+                        <img style="float: right; margin: 0% 4% 5% 0%;" src="../images/plus.png" width="7%" onclick="addCourse()">
+                    </div>
+
+                    <div>
+                        <br>
+                        <img style="float: left; margin-left: 5%; margin-right: 5%;" src="../images/building.png" width="8%"><h4 style="text-align: left; float: left;">Office</h4>
+                        <img id="delete_office" style="float: right; margin: 0% 4% 5% 0%; display: none;" src="../images/bin.png" width="7%" onclick="deleteOffice()">
+                        <img style="float: right; margin: 0% 4% 5% 0%;" src="../images/plus.png" width="7%" onclick="addOffice()">
+                    </div>
+
+                    <div id="office_tables">
+                    </div>
+
+                    <table id="contacts">
+                        <br>
+                        <img style="float: left; margin-left: 5%; margin-right: 5%;" src="../images/global.png" width="8%"><h4 style="text-align: left; float: left;">Contacts</h4>
+                        <img id="edit" style="float: right; margin: 0% 4% 5% 0%;" src="../images/pencil.png" width="7%" onclick="edit_site()">
+                        <img id="reject" style="display: none; float: right; margin: 0% 4% 5% 0%;" onclick="reject()" src="../images/close-button-.png" width="7%">
+                        <img id="confirm" src="../images/tick.png" width="7%" style="display: none; float: right; margin: 0% 4% 5% 0%;" onclick="conf()">
+                        <br>
+                        <thead>
+                        <tr>
+                            <th scope="col">email</th>
+                            <th scope="col">sitelink</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr id="infos">
+
+                        </tr>
+                        </tbody>
+                    </table>
+                    <br>
+                </div>
+            </div>
+        </div>
+        <div class="site-cache" id="site-cache"></div>
+    </div>
+</div>
+
+
+<script src="../js/jquery-1.11.1.js"></script>
+<script src="../js/index.js"></script>
+
+
+<!--===============================================================================================-->
+<script src="../vendor/jquery/jquery-3.2.1.min.js"></script>
+
+<script src="../js/main.js"></script>
+<script src="../cordova.js"></script>
+<script type="text/javascript">
+    function edit_site() {
+        document.getElementById("edit").style.display = 'none';
+        document.getElementById("confirm").style.display = 'inline';
+        document.getElementById("reject").style.display = 'inline';
+
+        var table = document.getElementById("contacts");
+        for (var i = 0, row; row = table.rows[i]; i++) {
+            //iterate through rows
+            //rows would be accessed using the "row" variable assigned in the for loop
+            for (var j = 1, col; col = row.cells[j]; j++) {
+
+                col.setAttribute("contenteditable", "true");
+
+            }
+        }
+    }
+
+    function conf() {
+
+        document.getElementById("edit").style.display = 'inline';
+        document.getElementById("confirm").style.display = 'none';
+        document.getElementById("reject").style.display = 'none';
+
+        var newsite;
+        var table = document.getElementById("contacts");
+        var email = localStorage.getItem("email");
+
+        for (var i = 0, row; row = table.rows[i]; i++) {
+            //iterate through rows
+            //rows would be accessed using the "row" variable assigned in the for loop
+            for (var j = 1, col; col = row.cells[j]; j++) {
+                newsite = col.innerHTML;
+                col.setAttribute("contenteditable", "false");
+            }
+        }
+
+        $.ajax({
+            type: 'GET',	//Request method: GET, POST
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/professor/changeSite.php',  //Where to send the data
+            crossDomain: true,
+            cache: false,
+            data: {email, newsite},
+            success: function (data) {
+            }
+        });
+    }
+
+    function reject() {
+        document.getElementById("edit").style.display = 'inline';
+        document.getElementById("confirm").style.display = 'none';
+        document.getElementById("reject").style.display = 'none';
+
+        var table = document.getElementById("contacts");
+        var email = localStorage.getItem("email");
+
+        $.ajax({
+            type: 'GET',	//Request method: GET, POST
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/professor/profile.php',  //Where to send the data
+            crossDomain: true,
+            cache: false,
+            data: {email},
+            success: function (data) {
+                var res = data.split(',');
+
+                for (var i = 0, row; row = table.rows[i]; i++) {
+                    //iterate through rows
+                    //rows would be accessed using the "row" variable assigned in the for loop
+                    for (var j = 1, col; col = row.cells[j]; j++) {
+                        col.setAttribute("contenteditable", "false");
+                        col.innerHTML = res[7];
+                    }
+                }
+            }
+        });
+    }
+
+</script>
+
+<script type="text/javascript">
+
+    function deleteOffice(){
+        var email = localStorage.getItem("email");
+        var offices = localStorage.getItem("offices").split("-");
+        var text = '\n';
+
+
+        for (i = 1; i < offices.length; i++) {
+            text += "\n"+i+". "+offices[i-1];
+        }
+
+        text.replace("undefined", "");
+
+        var num = prompt("Which office do you want to delete? : " + text, "Number");
+        if (num < 0 || num >= offices.length){
+            alert("Choose a valid number!");
+            return false;
+        }
+
+        var office_to_delete = offices[num-1].split(",")[0];
+
+        $.ajax({
+            type: 'GET',
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/professor/deleteOffice.php',
+            crossDomain: true,
+            cache: false,
+            data: {email, office_to_delete},
+            success: function (data) {
+                if (data == "failed") {
+                } else {
+                    alert(office_to_delete + " deleted!");
+                    window.location.href = "profile.html";
+                }
+            }
+        });
+    }
+
+    function addCourse(){
+        window.location.href = "profileChanges/addCourse.html";
+    }
+
+    function deleteCourse(){
+        var email = localStorage.getItem("email");
+        var teaching = prompt("Which course do you want to delete? : ", "Teaching");
+        $.ajax({
+            type: 'GET',
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/professor/deleteCourse.php',
+            crossDomain: true,
+            cache: false,
+            data: {email, teaching},
+            success: function (data) {
+                if (data == "failed") {
+                    alert("Insert a valid teaching value!");
+                } else {
+                    alert(teaching + " deleted!");
+                    window.location.href = "profile.html";
+                }
+            }
+        });
+    }
+
+    function addOffice(){
+        window.location.href = "profileChanges/addOffice.html";
+    }
+
+    $(document).ready(function () {
+
+
+        $.ajax({
+            type: 'GET',
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/verifySession.php',
+            crossDomain: true,
+            cache: false,
+            success: function (data) {
+                if (data == "false") {
+                    window.location.href = "../index.html";
+                }
+            }
+        });
+
+        edit(localStorage.getItem("color"));
+
+        closeApp();
+
+        var email = localStorage.getItem("email");
+
+        $.ajax({
+            type: 'GET',
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/professor/getTeaching.php',
+            crossDomain: true,
+            cache: false,
+            data: {email},
+            success: function (data) {
+
+                var courses = data.split('-');
+                var course_tables = document.getElementById("course_tables");
+
+                for (i = 0; i < courses.length - 1; i++) {
+
+                    if(i==1){
+                        document.getElementById("delete_course").style.display = "inline";
+                    }
+
+                    var parts = courses[i].split(',');
+
+                    course_tables.innerHTML += '<br><table><thead>' +
+                        '<tr><th scope="col">Teaching</th><th scope="col">Field of study</th><th scope="col">Faculty</th></tr></thead>' +
+                        '<tbody><tr id="course'+ i +'"></tr><tbody></table>';
+
+                    var table = document.getElementById("course" + i);
+
+                    table.innerHTML = '<td data-label="Teaching">' + parts[0] + '</td>';
+                    table.innerHTML += '<td data-label="Field of study">' + parts[2] + '</td>';
+                    table.innerHTML += '<td data-label="Faculty">' + parts[3] + '</td>';
+                }
+            }
+        });
+
+        $.ajax({
+            type: 'GET',
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/professor/getOffice.php',
+            crossDomain: true,
+            cache: false,
+            data: {email},
+            success: function (data) {
+
+                var courses = data.split('-');
+                var course_tables = document.getElementById("office_tables");
+
+                var offices = '';
+
+                for (i = 0; i < courses.length - 1; i++) {
+
+                    if(i==1){
+                        document.getElementById("delete_office").style.display = "inline";
+                    }
+
+                    var parts = courses[i].split(',');
+
+                    course_tables.innerHTML += '<br><table><thead>' +
+                        '<tr><th scope="col">Address</th><th scope="col">City</th></tr></thead>' +
+                        '<tbody><tr id="office'+ i +'"></tr></tbody></table>';
+
+                    var table = document.getElementById("office" + i);
+
+                    var address = parts[1] + ',' + parts[2]
+
+                    table.innerHTML = '<td data-label="Room">' + parts[3] + '</td>';
+                    table.innerHTML += '<td data-label="Address">' + address +  '</td>';
+                    table.innerHTML += '<td data-label="City">' + parts[4] + '</td>';
+
+                    offices += address + '-';
+
+                }
+
+                localStorage.setItem("offices", offices);
+            }
+        });
+
+
+        $.ajax({
+            type: 'GET',	//Request method: GET, POST
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/professor/profile.php',  //Where to send the data
+            crossDomain: true,
+            cache: false,
+            data: {email},
+            success: function (data) {
+                var res = data.split(',');
+
+                var top = document.getElementById("top");
+                var infos = document.getElementById("infos");
+
+                if (res[2] == 'm') {
+                    top.innerHTML += '<img src="../images/professor.png" class="img_profile" width="100px"><br>'
+                } else {
+                    top.innerHTML += '<img src="../images/woman.png" class="img_profile" width="100px"><br>'
+                }
+                top.innerHTML += '<h3>' + res[0] + '</h3>';
+                top.innerHTML += '<h3>' + res[1] + '</h3><br>';
+
+                infos.innerHTML = '<td data-label="email">' + res[3] + '</td>';
+                if (res[7] != '') {
+                    infos.innerHTML += '<td data-label="sitelink">' + res[7] + '</td>';
+                } else {
+                    infos.innerHTML += '<td data-label="sitelink">none</td>';
+                }
+
+                localStorage.setItem("siteLink", res[7]);
+            }
+        });
+    });
+
+</script>
+
+</body>
+</html>

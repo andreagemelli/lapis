@@ -1,0 +1,467 @@
+<html lang="en">
+<head>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0" name="viewport">
+    <link href="../css/util.css" rel="stylesheet" type="text/css">
+    <link href="../css/main.css" rel="stylesheet" type="text/css">
+    <!--===============================================================================================-->
+</head>
+
+<body>
+<div class="site-container">
+    <div class="site-pusher">
+
+        <header class="header" id="head">
+
+            <a class="header__icon" href="#" id="header__icon"></a>
+            <a class="header__logo" href="prof_receipt_summary.html">Receipt summary</a>
+
+            <nav class="menu" id="menu">
+                <div id="logo"><img class="img2" src="../images/lapis/menu.png" width="70%"></div>
+                <a href="homepage.html">Home<img height=24px src="../images/student/homepage.png" width=24px></a>
+                <a href="find_professor.html">Find professor<img height=24px src="../images/student/teacher.png"
+                                                                 width=24px></a>
+                <a href="profile.html">Profile<img height=24px src="../images/student/user.png" width=24px></a>
+                <a href="messages.html">Messages<img height=24px src="../images/student/mail.png" width=24px></a>
+                <a href="about_us.html">Contact us<img height=24px src="../images/student/support.png" width=24px></a>
+                <a href="../logout.html">Log out<img height=24px src="../images/student/logout.png" width=24px></a>
+                <div id="footer">Version 1.0</div>
+            </nav>
+        </header>
+        <div class="site-content">
+            <div class="container">
+                <div class="limiter">
+                    <div id="calendar">
+                    </div>
+                    <div id="noupcoming" style="display: none;">
+                        <center>
+
+                            <img src="../images/professor/beach.png" width="20%">
+                        </center>
+                    </div>
+                    <div id="addTable">
+                    </div>
+
+                    </br>
+                </div>
+            </div>
+        </div>
+        <div class="site-cache" id="site-cache"></div>
+    </div>
+</div>
+
+<script src="../js/jquery-1.11.1.js"></script>
+<script src="../js/index.js"></script>
+
+<!--===============================================================================================-->
+<script src="../vendor/jquery/jquery-3.2.1.min.js"></script>
+
+<script src="../js/main.js"></script>
+
+
+<script type="text/javascript">
+
+
+    /* Aggiunge una tabella relativa al ricevimento */
+    function addTable(profName, date, time, notes, status, i) {
+        if (status == 0) {
+            imgPath = '<img src="../images/calendarWait.png" height=32px width=32px>';
+        } else {
+            imgPath = '<img src="../images/calendarPassed.png" height=32px width=32px>';
+        }
+        var html = '<br><table id="table' + i + '"><thead><tr><th scope="col">Professor</th><th scope="col">Date</th><th scope="col">Notes</th></tr></thead><tbody><tr><td data-label="Professor">' + profName + '</td><td data-label="Date">' + date + '</td><td data-label="Time">' + time + '</td><td data-label="Notes">' + notes + '</td></tr></tbody></table>';
+        document.getElementById("addTable").innerHTML += html;
+
+        var html = '<center><button id="reject' + i + '"+style="display: none;" type="button" onclick="reject(id)"><img\n' +
+            '                                src="../images/bin.png" width="30px"></button></center><br>';
+        document.getElementById("addTable").innerHTML += html;
+    }
+
+    function reject(id) {
+
+        var r = confirm("Press ok to delete!");
+        if (r == true) {
+            var i = id.slice(-1);
+            var profID = localStorage.getItem("profID");
+            var studentEmail = localStorage.getItem("email");
+            var teaching = localStorage.getItem("teaching");
+            var table = "table" + i;
+
+            var date = document.getElementById(String(table)).rows.item(1).cells.item(1).innerHTML;
+            $.ajax({
+                type: 'GET',
+                url: 'http://gemelligiuntinihci.altervista.org/myPHP/student/deleteReceipt.php',
+                crossDomain: true,
+                cache: false,
+                data: {studentEmail, profID, teaching, date},
+                success: function (data) {
+                    if (data == "success") {
+                        window.location.href = "prof_receipt_summary.html";
+                    } else {
+
+                    }
+                }
+            });
+        }
+    }
+
+    function addCalendar(day, start, end, range, address, room, d, i) {
+        //alert(day+start+end+range+d+i);
+        //var html = '<br><table id="tableCalendar' + i + '"><thead><tr><th scope="col">Day</th><th scope="col">Start time</th><th scope="col">End time</th><th scope="col">Range</th></tr></thead><tbody><tr><td data-label="Day">' + d + '</td><td data-label="Start">' + start + '</td><td data-label="End">' + end + '</td><td data-label="Time">' + range + "min" + '</td></tr></tbody></table>';
+        //document.getElementById("calendar").innerHTML += html;
+
+        //localStorage.setItem(range,"range");
+        var secondDiv = document.createElement("div");
+        secondDiv.id = 'tableCalendar' + i;
+        secondDiv.style.marginBottom = "25px";
+        secondDiv.style.marginTop = "25px";
+        document.getElementById("calendar").appendChild(secondDiv);
+
+        var secondLeft = document.createElement("div");
+        secondLeft.style.width = "30%";
+        secondLeft.style.float = "left";
+
+        secondDiv.appendChild(secondLeft);
+        secondLeft.innerHTML += '<img src="../images/professor/calendar_summary.png" style="vertical-align: middle;" width="50%">';
+
+        var nameteaching = document.createElement("div");
+
+        nameteaching.style.width = "50%";
+        nameteaching.style.float = "left";
+        secondDiv.appendChild(nameteaching);
+
+        var dayreceipt = document.createElement("div");
+        dayreceipt.id = 'dayreceipt' + i;
+        //var date = document.createElement("div");
+        //date.id = 'start'+i;
+        var time = document.createElement("div");
+        time.id = 'time' + i;
+        var note = document.createElement("div");
+        note.style.display = "none";
+        note.id = 'range' + i;
+
+        var location = document.createElement("div");
+        var chair = document.createElement("div");
+
+        dayreceipt.style.marginBottom = "5px";
+        dayreceipt.innerHTML += '<img src="../images/professor/day.png" width="8%" style="vertical-align: middle;"> ' + d + '<br>';
+        //date.style.marginBottom = "5px";
+        //date.innerHTML += '<img src="../images/professor/clock.png" width="8%" style="vertical-align: middle;"> ' + start.slice(0, -3) + '<br>';
+        time.style.marginBottom = "5px";
+        time.innerHTML += '<img src="../images/professor/clock.png" width="8%" style="vertical-align: middle;"> ' + start.slice(0, -3) + "-" + end.slice(0, -3) + '<br>';
+        note.style.marginBottom = "5px";
+        note.innerHTML += '<img src="../images/professor/clock.png" width="8%" style="vertical-align: middle;"> ' + range + '<br>';
+        location.style.marginBottom = "5px";
+        location.innerHTML += '<img src="../images/student/placeholder.png" width="8%" style="vertical-align: middle;"> ' + address + '<br>';
+        chair.style.marginBottom = "5px";
+        chair.innerHTML += '<img src="../images/student/chair.png" width="8%" style="vertical-align: middle;"> ' + "Room nr." + room + '<br>';
+
+
+        nameteaching.appendChild(dayreceipt);
+        //nameteaching.appendChild(date);
+        nameteaching.appendChild(time);
+        nameteaching.appendChild(location);
+        nameteaching.appendChild(chair);
+        nameteaching.appendChild(note);
+
+
+        var button = document.createElement("div");
+        button.style.width = "20%";
+        button.style.float = "left";
+        //button.style.paddingLeft = "35%";
+        secondDiv.appendChild(button);
+
+        var b = document.createElement("div");
+        b.innerHTML += '<button id="reject' + i + '"+ onclick="myFunction(id)"><img src="../images/plus.png" width="36" height="36"></button>';
+
+        button.appendChild(b);
+
+
+        //var html = '<center><button id="reject'+i+'"+ onclick="myFunction(id)"><img src="../images/plus.png" width="42" height="42"></button></center>';
+        //document.getElementById("calendar").innerHTML += html;
+    }
+
+    function addCaption() {
+        document.getElementById("addTable").innerHTML += '<br><h4 align="center">Receipts Summary</h4>';
+    }
+
+    function addCaptionNoFetch() {
+        document.getElementById("addTable").innerHTML += '<br><center><h7>No receipts found! Give a look at the calendar to request a receipt.</h7></center>';
+    }
+
+    function addCaptionCalendar() {
+        document.getElementById("calendar").innerHTML += '<br><h4 align="center">Professor Calendar</h4>';
+    }
+
+    function addCaptionCalendarNoFetch() {
+        document.getElementById("calendar").innerHTML += '<center><h7>No calendar found!</h7></center>';
+        document.getElementById("noupcoming").style.display = "inline";
+    }
+
+
+    /* Aggiunge una tabella relativa al ricevimento */
+    function addTable(profName, date, time, notes, status, i) {
+        if (status == 0) {
+            imgPath = '<img src="../images/calendarWait.png" height=32px width=32px>';
+        } else {
+            imgPath = '<img src="../images/calendarPassed.png" height=32px width=32px>';
+        }
+        var html = '<br><table id="table' + i + '"><thead><tr><th scope="col">Professor</th><th scope="col">Date</th><th scope="col">Notes</th></tr></thead><tbody><tr><td data-label="Professor">' + profName + '</td><td data-label="Date">' + date + '</td><td data-label="Time">' + time + '</td><td data-label="Notes">' + notes + '</td></tr></tbody></table>';
+        document.getElementById("addTable").innerHTML += html;
+
+        var html = '<center><button id="reject' + i + '"+style="display: none;" type="button" onclick="reject(id)"><img\n' +
+            '                                src="../images/bin.png" width="30px"></button></center><br>';
+        document.getElementById("addTable").innerHTML += html;
+    }
+
+    function reject(id) {
+
+        var r = confirm("Press ok to delete!");
+        if (r == true) {
+            var i = id.slice(-1);
+            var profID = localStorage.getItem("profID");
+            var studentEmail = localStorage.getItem("email");
+            var teaching = localStorage.getItem("teaching");
+            var table = "table" + i;
+
+            var date = document.getElementById(String(table)).rows.item(1).cells.item(1).innerHTML;
+            $.ajax({
+                type: 'GET',
+                url: 'http://gemelligiuntinihci.altervista.org/myPHP/student/deleteReceipt.php',
+                crossDomain: true,
+                cache: false,
+                data: {studentEmail, profID, teaching, date},
+                success: function (data) {
+                    if (data == "success") {
+                        window.location.href = "prof_receipt_summary.html";
+                    } else {
+
+                    }
+                }
+            });
+        }
+    }
+
+    function addCalendar(day, start, end, range, address, room, d, i) {
+        //alert(day+start+end+range+d+i);
+        //var html = '<br><table id="tableCalendar' + i + '"><thead><tr><th scope="col">Day</th><th scope="col">Start time</th><th scope="col">End time</th><th scope="col">Range</th></tr></thead><tbody><tr><td data-label="Day">' + d + '</td><td data-label="Start">' + start + '</td><td data-label="End">' + end + '</td><td data-label="Time">' + range + "min" + '</td></tr></tbody></table>';
+        //document.getElementById("calendar").innerHTML += html;
+
+        //localStorage.setItem(range,"range");
+        var secondDiv = document.createElement("div");
+        secondDiv.id = 'tableCalendar' + i;
+        secondDiv.style.marginBottom = "25px";
+        secondDiv.style.marginTop = "25px";
+        document.getElementById("calendar").appendChild(secondDiv);
+
+        var secondLeft = document.createElement("div");
+        secondLeft.style.width = "30%";
+        secondLeft.style.float = "left";
+
+        secondDiv.appendChild(secondLeft);
+        secondLeft.innerHTML += '<img src="../images/professor/calendar_summary.png" style="vertical-align: middle;" width="50%">';
+
+        var nameteaching = document.createElement("div");
+
+        nameteaching.style.width = "50%";
+        nameteaching.style.float = "left";
+        secondDiv.appendChild(nameteaching);
+
+        var dayreceipt = document.createElement("div");
+        dayreceipt.id = 'dayreceipt' + i;
+        //var date = document.createElement("div");
+        //date.id = 'start'+i;
+        var time = document.createElement("div");
+        time.id = 'time' + i;
+        var note = document.createElement("div");
+        note.style.display = "none";
+        note.id = 'range' + i;
+
+        var location = document.createElement("div");
+        var chair = document.createElement("div");
+
+        dayreceipt.style.marginBottom = "5px";
+        dayreceipt.innerHTML += '<img src="../images/professor/day.png" width="8%" style="vertical-align: middle;"> ' + d + '<br>';
+        //date.style.marginBottom = "5px";
+        //date.innerHTML += '<img src="../images/professor/clock.png" width="8%" style="vertical-align: middle;"> ' + start.slice(0, -3) + '<br>';
+        time.style.marginBottom = "5px";
+        time.innerHTML += '<img src="../images/professor/clock.png" width="8%" style="vertical-align: middle;"> ' + start.slice(0, -3) + "-" + end.slice(0, -3) + '<br>';
+        note.style.marginBottom = "5px";
+        note.innerHTML += '<img src="../images/professor/clock.png" width="8%" style="vertical-align: middle;"> ' + range + '<br>';
+        location.style.marginBottom = "5px";
+        location.innerHTML += '<img src="../images/student/placeholder.png" width="8%" style="vertical-align: middle;"> ' + address + '<br>';
+        chair.style.marginBottom = "5px";
+        chair.innerHTML += '<img src="../images/student/chair.png" width="8%" style="vertical-align: middle;"> ' + "Room nr." + room + '<br>';
+
+
+        nameteaching.appendChild(dayreceipt);
+        //nameteaching.appendChild(date);
+        nameteaching.appendChild(time);
+        nameteaching.appendChild(location);
+        nameteaching.appendChild(chair);
+        nameteaching.appendChild(note);
+
+
+        var button = document.createElement("div");
+        button.style.width = "20%";
+        button.style.float = "left";
+        //button.style.paddingLeft = "35%";
+        secondDiv.appendChild(button);
+
+        var b = document.createElement("div");
+        b.innerHTML += '<button id="reject' + i + '"+ onclick="myFunction(id)"><img src="../images/plus.png" width="36" height="36"></button>';
+
+        button.appendChild(b);
+
+
+        //var html = '<center><button id="reject'+i+'"+ onclick="myFunction(id)"><img src="../images/plus.png" width="42" height="42"></button></center>';
+        //document.getElementById("calendar").innerHTML += html;
+    }
+
+    function addCaption() {
+        document.getElementById("addTable").innerHTML += '<br><h4 align="center">Receipts Summary</h4>';
+    }
+
+    function addCaptionNoFetch() {
+        document.getElementById("addTable").innerHTML += '<br><center><h7>No receipts found! Give a look at the calendar to request a receipt.</h7></center>';
+    }
+
+    function addCaptionCalendar() {
+        document.getElementById("calendar").innerHTML += '<br><h4 align="center">Professor Calendar</h4>';
+    }
+
+    function addCaptionCalendarNoFetch() {
+        document.getElementById("calendar").innerHTML += '<center><h7>No calendar found!</h7></center>';
+        document.getElementById("noupcoming").style.display = "inline";
+    }
+
+    function myFunction(id) {
+        var i = id.slice(-1);
+
+        var date = 'dayreceipt' + i;
+        //var start = 'start'+i;
+        //var end  = 'end'+i;
+        var time = 'time' + i;
+        var range = 'range' + i;
+
+        time = document.getElementById(String(time)).textContent.replace(/\s/g, '');
+        var parts = time.split('-');
+
+        var day = document.getElementById(String(date)).textContent.replace(/\s/g, '');
+        //var start = document.getElementById(String(start)).textContent.replace(/\s/g, '');
+        //var end = document.getElementById(String(end)).textContent.replace(/\s/g, '');
+        var start = parts[0];
+        var end = parts[1];
+        var range = document.getElementById(String(range)).textContent.replace(/\s/g, '');
+
+        var d;
+        localStorage.setItem("dayOfWeek", day);
+        if (day == 'Monday') {
+            d = 1;
+        } else if (day == 'Tuesday') {
+            d = 2;
+        } else if (day == 'Wednesday') {
+            d = 3;
+        } else if (day == 'Thursday') {
+            d = 4;
+        } else if (day == 'Friday') {
+            d = 5;
+        }
+
+        localStorage.setItem("dayOfWeekInt", d);
+        localStorage.setItem("start", start);
+        localStorage.setItem("end", end);
+        localStorage.setItem("range", range);
+
+        window.location.href = "request_receipt.html";
+    }
+</script>
+
+
+<script>
+    /* Al caricamento della pagina, aggiunge una tabella per ogni ricevimento */
+    $(document).ready(function () {
+
+        $.ajax({
+            type: 'GET',
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/verifySession.php',
+            crossDomain: true,
+            cache: false,
+            success: function (data) {
+                if (data == "false") {
+                    window.location.href = "../index.html";
+                }
+            }
+        });
+
+        edit(localStorage.getItem("color"));
+
+        addCaption();
+        var profID = localStorage.getItem("profID");
+        var studentEmail = localStorage.getItem("email");
+        var teaching = localStorage.getItem("teaching");
+
+        $.ajax({
+            type: 'GET',
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/student/receipt.php',
+            crossDomain: true,
+            cache: false,
+            data: {profID, studentEmail, teaching},
+            success: function (data) {
+                if (data == "failed") {
+                    addCaptionNoFetch();
+                } else {
+                    var parts = data.split(',');
+                    parts.splice(-1, 1);
+                    for (i = 0; i < parts.length / 5; i++) {
+                        addTable(parts[i * 5], parts[i * 5 + 1], parts[i * 5 + 2], parts[i * 5 + 3], parts[i * 5 + 4], i);
+                    }
+                }
+            }
+        });
+
+        addCaptionCalendar();
+
+        $.ajax({
+            type: 'GET',
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/student/getProfCalendar.php',
+            crossDomain: true,
+            cache: false,
+            data: {profID, teaching},
+            success: function (data) {
+                data = $.trim(data);
+
+                if (data != "failed") {
+
+                    var parts = data.split(',');
+                    parts.splice(-1, 1);
+
+                    var d = "";
+                    for (i = 0; i < parts.length / 6; i++) {
+                        if (parts[i * 6] == '1') {
+                            d = 'Monday';
+                        } else if (parts[i * 6] == '2') {
+                            d = 'Tuesday';
+                        } else if (parts[i * 6] == '3') {
+                            d = 'Wednesday';
+                        } else if (parts[i * 6] == '4') {
+                            d = 'Thursday';
+                        } else if (parts[i * 6] == '5') {
+                            d = 'Friday';
+                        }
+
+                        addCalendar(parts[i * 6], parts[i * 6 + 1], parts[i * 6 + 2], parts[i * 6 + 3], parts[i * 6 + 4], parts[i * 6 + 5], d, i);
+                    }
+                } else {
+
+                    addCaptionCalendarNoFetch();
+                }
+            }
+        });
+
+    });
+
+</script>
+
+</body>
+</html>
+

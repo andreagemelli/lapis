@@ -1,0 +1,133 @@
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../../css/util.css">
+    <link rel="stylesheet" type="text/css" href="../../css/main.css">
+    <!--===============================================================================================-->
+</head>
+
+<body>
+<div class="site-container">
+    <div class="site-pusher">
+
+        <header class="header" id="header">
+
+            <a href="../index.html" class="header__logo">Lapis</a>
+
+        </header>
+
+        <div class="site-content">
+            <div class="container">
+                <div class="limiter">
+                    <div class="container-login100">
+                        <div class="wrap-login100 p-t-5 p-b-5">
+                            <form class="login100-form validate-form">
+                                        <span class="login100-form-title p-b-25">
+                                            Complete your registration!
+                                        </span>
+
+                                <span class="login100-form-avatar">
+                                            <img src="../../images/1.png" alt="">
+                                        </span>
+
+                                <div>
+                                    <br>
+                                    <h4 align="center">Your informations</h4>
+
+                                </div>
+
+                                <div class="wrap-input100 validate-input m-t-15 m-b-15" data-validate="">
+                                    <input class="input100" type="text" name="fresher" id="fresher">
+                                    <span class="focus-input100" data-placeholder="Fresher"></span>
+                                </div>
+
+                                <div class="wrap-input100 validate-input m-t-15 m-b-60" data-validate="">
+                                    <input class="input100" type="text" name="degreeCourse" id="degreeCourse">
+                                    <span class="focus-input100" data-placeholder="Course"></span>
+                                </div>
+
+                                <div>
+                                    <br>
+                                    <h4 align="center">Type of Degree</h4>
+                                    <br>
+                                </div>
+                                <input type="radio" style="vertical-align: middle" name="typeOfDegree" value="three"
+                                       id="radio-one" class="form-radio m-b-10" checked><label for="radio-one">three-year</label>
+                                <br>
+                                <input type="radio" style="vertical-align: middle" name="typeOfDegree" value="master"
+                                       id="radio-two" class="form-radio m-b-10"><label for="radio-one">master </label>
+                                <br>
+                                <input type="radio" style="vertical-align: middle" name="typeOfDegree" value="single"
+                                       id="radio-three" class="form-radio m-b-10"><label for="radio-one">single
+                                cycle</label>
+                                <br>
+                                <div class="container-login100-form-btn m-t-30">
+                                    <button class="login100-form-btn" id="firstbtn">
+                                        Ok!
+                                    </button>
+                                </div>
+                            </form>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="site-cache" id="site-cache"></div>
+    </div>
+</div>
+
+
+<script src="../../js/jquery-1.11.1.js"></script>
+<script src="../../js/index.js"></script>
+
+
+<!--===============================================================================================-->
+<script src="../../vendor/jquery/jquery-3.2.1.min.js"></script>
+
+<script src="../../js/main.js"></script>
+
+<script>
+
+    //Login Function
+    $("#firstbtn").click(function () {
+
+        var fresher = document.getElementById("fresher").value;
+        var degreeCourse = document.getElementById("degreeCourse").value;
+        var typeOfDegree;
+        if (document.getElementById('radio-one').checked) {
+            typeOfDegree = document.getElementById('radio-one').value;
+        } else if (document.getElementById('radio-two').checked) {
+            typeOfDegree = document.getElementById('radio-two').value;
+        } else if (document.getElementById('radio-three').checked) {
+            typeOfDegree = document.getElementById('radio-three').value;
+        }
+        var email = localStorage.getItem("email");
+
+        /* TODO add local variables */
+
+        if ($.trim(fresher).length > 0 & $.trim(degreeCourse).length > 0 & $.trim(typeOfDegree).length > 0) {
+            $.ajax({
+                type: 'GET',	//Request method: GET, POST
+                url: 'http://gemelligiuntinihci.altervista.org/myPHP/student/completedRegistration.php',  //Where to send the data
+                crossDomain: true,
+                cache: false,
+                data: {fresher, degreeCourse, typeOfDegree, email},
+                success: function (data) {
+                    if (data == "success") {
+                        window.location.href = "../find_professor.html";
+                    } else if (data == "failed") {
+                        alert("Complete registration error");
+                        window.location.href = "../../index.html";
+                    }
+                }
+            });
+        }
+        return false;
+    });
+
+</script>
+
+</body>
+</html>

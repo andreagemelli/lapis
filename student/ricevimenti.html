@@ -1,0 +1,236 @@
+<html lang="en">
+<head>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0" name="viewport">
+    <link href="../css/util.css" rel="stylesheet" type="text/css">
+    <link href="../css/main.css" rel="stylesheet" type="text/css">
+    <!--===============================================================================================-->
+</head>
+
+<body>
+<div class="site-container">
+    <div class="site-pusher">
+
+        <header class="header" id="head">
+
+            <a class="header__icon" href="#" id="header__icon"></a>
+            <a class="header__logo" href="#">Professor Summary</a>
+
+            <nav class="menu" id="menu">
+                <div id="logo"><img class="img2" src="../images/lapis/menu.png" width="70%"></div>
+                <a href="homepage.html">Home<img height=24px src="../images/student/homepage.png" width=24px></a>
+                <a href="find_professor.html">Find professor<img height=24px src="../images/student/teacher.png"
+                                                                 width=24px></a>
+                <a href="profile.html">Profile<img height=24px src="../images/student/user.png" width=24px></a>
+                <a href="messages.html">Messages<img height=24px src="../images/student/mail.png" width=24px></a>
+                <a href="about_us.html">Contact us<img height=24px src="../images/student/support.png" width=24px></a>
+                <a href="../logout.html">Log out<img height=24px src="../images/student/logout.png" width=24px></a>
+                <div id="footer">Version 1.0</div>
+            </nav>
+        </header>
+        <div class="site-content">
+            <div class="container">
+                <div class="limiter">
+
+                    <br>
+                    <div id="professorInfo"><h4 class="summary" style="text-align: left;">Prof infos:</h4></div>
+                    <div id="profInfo">
+                    </div>
+
+                    <div id="selectTeaching">
+                    </div>
+
+                    <div id="addTable">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="site-cache" id="site-cache"></div>
+    </div>
+</div>
+
+<script src="../js/jquery-1.11.1.js"></script>
+<script src="../js/index.js"></script>
+
+<!--===============================================================================================-->
+<script src="../vendor/jquery/jquery-3.2.1.min.js"></script>
+
+<script src="../js/main.js"></script>
+
+<script>
+    $(document).ready(function () {
+
+        $.ajax({
+            type: 'GET',
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/verifySession.php',
+            crossDomain: true,
+            cache: false,
+            success: function (data) {
+                if (data == "false") {
+                    window.location.href = "../index.html";
+                }
+            }
+        });
+
+
+        edit(localStorage.getItem("color"));
+
+        var profID = window.location.search.substr(1);
+        var parts = profID.split('=', 2);
+        profID = parts[1];
+
+
+
+
+        /* Estrapolo informazioni dal professore, Email - Sito internet - Status */
+        $.ajax({
+            type: 'GET',
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/student/getProfSummary2.php',
+            crossDomain: true,
+            cache: false,
+            data: {profID},
+            success: function (data) {
+                //
+
+                var parts = data.split('-', 4);
+                var profStatus;
+                var img;
+                var gender = parts[3].replace(/\s/g, '');
+
+                var site = parts[1].replace(/\s/g, '');
+
+                if(site == "None"){
+                    parts[1] = "No site available"
+                }
+
+                if (parts[2] == 0) {
+                    profStatus = "Online ";
+                    img = "tick";
+                } else {
+                    profStatus = "Offline ";
+                    img = "close-button-";
+                }
+
+                var prefDiv = document.createElement("div");
+                prefDiv.style.marginBottom = "25px";
+                prefDiv.id = "table_prof";
+                document.getElementById("profInfo").appendChild(prefDiv);
+
+                var left = document.createElement("div");
+                left.style.width = "30%";
+                left.style.float = "left";
+
+                prefDiv.appendChild(left);
+
+
+                if (gender == "m") {
+                    left.innerHTML += '<img src="../images/professor.png" style="vertical-align: middle;" class="img_profile" width="70%">';
+                } else {
+                    left.innerHTML += '<img src="../images/woman.png" style="vertical-align: middle;" class="img_profile" width="70%">';
+                }
+
+                var profinfo = document.createElement("div");
+                profinfo.style.width = "70%";
+                profinfo.style.float = "left";
+                prefDiv.appendChild(profinfo);
+
+                var name = document.createElement("div");
+                var email = document.createElement("div");
+                var status = document.createElement("div");
+
+                name.style.marginBottom = "5px";
+                name.style.overflow = "auto";
+                name.innerHTML += '<img src="../images/global.png" width="8%" style="vertical-align: middle;"> ' + parts[1] + '<br>';
+                email.style.marginBottom = "5px";
+                email.innerHTML += '<img src="../images/professor/mail.png" width="8%" style="vertical-align: middle;"><a href="mailto:' + parts[0] + '"> ' + parts[0] + '</a><br>';
+                status.style.marginBottom = "5px";
+                status.innerHTML += '<img src="../images/' + img + '.png" width="8%" style="vertical-align: middle;"> ' + profStatus + '<br>';
+
+                profinfo.appendChild(name);
+                profinfo.appendChild(email);
+                profinfo.appendChild(status);
+
+                var space = document.createElement("br");
+                profinfo.appendChild(space);
+
+                var html = '<center><button id="reject"+style="display: none;" type="button" onclick="reject()"><img\n' +
+                    '                                src="../images/bin.png" width="20px"></button><br><h7>Delete Preference</h7></center>';
+                document.getElementById("profInfo").innerHTML += html;
+
+            }
+        });
+
+        /* Estrapolo gli insegnamenti di un professore */
+        $.ajax({
+            type: 'GET',
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/student/getProfTeaching.php',
+            crossDomain: true,
+            cache: false,
+            data: {profID},
+            success: function (data) {
+
+                var parts = data.split('-');
+                parts.splice(0, -1);
+                var html = '<div id="courseInfo"><br><h4 style="text-align: left;" class="summary">Prof courses:</h4><br></div>';
+                document.getElementById("selectTeaching").innerHTML += html;
+
+                for (i = 0; i < parts.length - 1; i++) {
+                    var html = '<input type="radio" style="vertical-align: middle" name="teaching" value="' + parts[i] + '" id="radio' + i + '" class="form-radio m-b-20"><label for="radio' + i + '">' + parts[i] + '</label><br>';
+                    document.getElementById("selectTeaching").innerHTML += html;
+                }
+
+                var html = '<div class="container-login100-form-btn m-t-30"><button class="login100-form-btn m-b-15" id="firstbtn" onclick="myFunction()">Ok!</button></div>';
+                document.getElementById("selectTeaching").innerHTML += html;
+            }
+        });
+
+        localStorage.setItem("courselength", parts.length);
+        localStorage.setItem("profID", profID);
+
+    });
+</script>
+
+<script>
+    /* Salvo le informazioni relative al corso del professore , informazione necessaria per avere un riassunto completo del calendario del corso e dei ricevimenti nella pagina prof_receipt_summary */
+    function myFunction() {
+        var course;
+        var select = false;
+
+        for (i = 0; i < localStorage.getItem("courselength"); i++) {
+            if (document.getElementById('radio' + i).checked) {
+                course = document.getElementById('radio' + i).value;
+                localStorage.setItem("teaching", course);
+                window.location.href = "prof_receipt_summary.html";
+                select = true;
+            }
+        }
+        if (select == false)
+            alert("Select a course!");
+    }
+
+    function reject() {
+        var r = confirm("Press ok to delete!");
+        if (r == true) {
+            var profID = localStorage.getItem("profID");
+            var studentEmail = localStorage.getItem("email");
+            alert(profID);
+            $.ajax({
+                type: 'GET',
+                url: 'http://gemelligiuntinihci.altervista.org/myPHP/student/deletePreference.php',
+                crossDomain: true,
+                cache: false,
+                data: {profID, studentEmail},
+                success: function (data) {
+                    alert(data);
+                    if (data == "success") {
+                        window.location.href = "homepage.html";
+                    } else {
+                        alert("error");
+                    }
+                }
+            });
+        }
+    }
+</script>
+
+</body>
+</html>

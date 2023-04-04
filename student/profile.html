@@ -1,0 +1,228 @@
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../css/util.css">
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
+    <!--
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+-->
+    <!--===============================================================================================-->
+</head>
+
+<body>
+<div class="site-container">
+    <div class="site-pusher">
+
+        <header class="header" id="head">
+
+            <a href="#" class="header__icon" id="header__icon"></a>
+            <a href="profile.html" class="header__logo">Profile</a>
+
+            <nav class="menu" id="menu">
+                <div id="logo"><img class="img2" src="../images/lapis/menu.png" width="70%"></div>
+                <a href="homepage.html">Home<img src="../images/student/homepage.png" height=24px width=24px></a>
+                <a href="find_professor.html">Find professor<img src="../images/student/teacher.png" height=24px width=24px></a>
+                <a style="font-weight: bold;">Profile<img src="../images/student/user.png" height=24px width=24px></a>
+                <a href="messages.html">Messages<img src="../images/student/mail.png" height=24px width=24px></a>
+                <a href="about_us.html">Contact us<img height=24px src="../images/student/support.png" width=24px></a>
+                <a href="../logout.html">Log out<img src="../images/student/logout.png" height=24px width=24px></a>
+                <div id="footer">Version 1.0</div>
+            </nav>
+        </header>
+
+        <div class="site-content">
+            <div class="container">
+                <div class="limiter" style="text-align: center;">
+                    <div id="top">
+                        <br>
+                    </div>
+                    <br>
+                    <h4>General Infos</h4>
+                    <br>
+                    <table id="table_info">
+                        <thead>
+                        <tr>
+                            <th scope="col">fresher</th>
+                            <th scope="col">degree course</th>
+                            <th scope="col">type of degree</th>
+                            <th scope="col">email</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr id="infos">
+
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div id="buttons" class="buttons">
+                        <br>
+                        <button id="edit" type="button" onclick="edit()"><img src="../images/pencil.png" width="40px">
+                        </button>
+                        <button id="confirm" style="display: none;" type="button" onclick="confirm()"><img
+                                src="../images/tick.png" width="40px"></button>
+                        <button id="reject" style="display: none;" type="button" onclick="reject()"><img
+                                src="../images/close-button-.png" width="40px"></button>
+                    </div>
+                    <h4 style="text-align: center">Edit Profile</h4>
+                    <br>
+                </div>
+            </div>
+        </div>
+        <div class="site-cache" id="site-cache"></div>
+    </div>
+</div>
+
+
+<script src="../js/jquery-1.11.1.js"></script>
+<script src="../js/index.js"></script>
+
+
+<script src="../vendor/jquery/jquery-3.2.1.min.js"></script>
+<script src="../js/main.js"></script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+
+        $.ajax({
+            type: 'GET',
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/verifySession.php',
+            crossDomain: true,
+            cache: false,
+            success: function (data) {
+                if (data == "false") {
+                    window.location.href = "../index.html";
+                }
+            }
+        });
+
+
+
+        var email = localStorage.getItem("email");
+        $.ajax({
+            type: 'GET',	//Request method: GET, POST
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/student/profile.php',  //Where to send the data
+            crossDomain: true,
+            cache: false,
+            data: {email},
+            success: function (data) {
+                var res = data.split(',');
+
+                var top = document.getElementById("top");
+                var infos = document.getElementById("infos");
+
+                if (res[2] == 'm') {
+                    top.innerHTML += '<img src="../images/student.png" class="img_profile" width="100px"><br>'
+                } else {
+                    top.innerHTML += '<img src="../images/girl.png" class="img_profile" width="100px"><br>'
+                }
+                top.innerHTML += '<h3>' + res[0] + '</h3>';
+                top.innerHTML += '<h3>' + res[1] + '</h3>';
+
+                infos.innerHTML += '<td data-label="fresher">' + res[4] + '</td>';
+                infos.innerHTML += '<td data-label="degree course">' + res[5] + '</td>';
+                infos.innerHTML += '<td data-label="type of degree">' + res[6] + '</td>';
+                infos.innerHTML += '<td data-label="email">' + res[3] + '</td>';
+            }
+        });
+
+    });
+
+    edit(localStorage.getItem("color"));
+    // $('#makeEditable').SetEditable({ $addButton: $('#but_add')});
+
+</script>
+
+<script>
+    function edit() {
+        document.getElementById("edit").style.display = 'none';
+        document.getElementById("confirm").style.display = 'inline';
+        document.getElementById("reject").style.display = 'inline';
+
+        var table = document.getElementById("table_info");
+        for (var i = 0, row; row = table.rows[i]; i++) {
+            //iterate through rows
+            //rows would be accessed using the "row" variable assigned in the for loop
+            for (var j = 0, col; col = row.cells[j]; j++) {
+                if (j < 3) {
+                    col.setAttribute("contenteditable", "true");
+                }
+            }
+        }
+    }
+
+    function confirm() {
+
+        document.getElementById("edit").style.display = 'inline';
+        document.getElementById("confirm").style.display = 'none';
+        document.getElementById("reject").style.display = 'none';
+
+        var changes = [];
+        var table = document.getElementById("table_info");
+        var email = localStorage.getItem("email");
+
+        for (var i = 0, row; row = table.rows[i]; i++) {
+            //iterate through rows
+            //rows would be accessed using the "row" variable assigned in the for loop
+            if (i >= 1) {
+                for (var j = 0, col; col = row.cells[j]; j++) {
+                    changes.push(col.innerHTML);
+                    col.setAttribute("contenteditable", "false");
+                }
+            }
+        }
+
+        var fresher = changes[0];
+        var degreeCourse = changes[1];
+        var typeOfDegree = changes[2];
+
+        $.ajax({
+            type: 'GET',	//Request method: GET, POST
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/student/profile_confirm.php',  //Where to send the data
+            crossDomain: true,
+            cache: false,
+            data: {email, fresher, degreeCourse, typeOfDegree},
+            success: function (data) {
+            }
+        });
+    }
+
+    function reject() {
+        document.getElementById("edit").style.display = 'inline';
+        document.getElementById("confirm").style.display = 'none';
+        document.getElementById("reject").style.display = 'none';
+
+        var table = document.getElementById("table_info");
+        var email = localStorage.getItem("email");
+
+        $.ajax({
+            type: 'GET',	//Request method: GET, POST
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/student/profile.php',  //Where to send the data
+            crossDomain: true,
+            cache: false,
+            data: {email},
+            success: function (data) {
+                var res = data.split(',');
+                var infos = document.getElementById("infos");
+
+                for (var i = 0, row; row = table.rows[i]; i++) {
+                    //iterate through rows
+                    //rows would be accessed using the "row" variable assigned in the for loop
+                    var index = 4; // index from wich start student informations
+                    for (var j = 0, col; col = row.cells[j]; j++) {
+                        if (j < 3) {
+                            col.setAttribute("contenteditable", "false");
+                            col.innerHTML = res[index];
+                            index++;
+                        }
+                    }
+                }
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

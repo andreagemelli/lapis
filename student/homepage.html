@@ -1,0 +1,272 @@
+<html lang="en">
+<head>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0" name="viewport">
+    <link href="../css/util.css" rel="stylesheet" type="text/css">
+    <link href="../css/main.css" rel="stylesheet" type="text/css">
+    <!--===============================================================================================-->
+</head>
+
+<body>
+<div class="site-container">
+    <div class="site-pusher">
+
+        <header class="header" id="head">
+
+            <a class="header__icon" href="#" id="header__icon"></a>
+            <a class="header__logo" href="homepage.html">Homepage</a>
+
+            <nav class="menu" id="menu">
+
+                <div id="logo"><img class="img2" src="../images/lapis/menu.png" width="70%"></div>
+                <a style="font-weight: bold;">Homepage<img height=24px src="../images/student/homepage.png" width=24px></a>
+                <a href="find_professor.html">Find professor<img height=24px src="../images/student/teacher.png"
+                                                                 width=24px></a>
+                <a href="profile.html">Profile<img height=24px src="../images/student/user.png" width=24px></a>
+                <a href="messages.html">Messages<img height=24px src="../images/student/mail.png" width=24px></a>
+                <a href="about_us.html">Contact us<img height=24px src="../images/student/support.png" width=24px></a>
+                <a href="../logout.html">Log out<img height=24px src="../images/student/logout.png" width=24px></a>
+                <div id="footer">Version 1.0</div>
+            </nav>
+        </header>
+
+        <div class="site-content">
+            <div class="container">
+                <div class="limiter">
+                    <br>
+                    <h4 align="center">Your Preferences</h4>
+
+                    <div align="center" id="profContainer">
+
+                    </div>
+                    <br>
+                    <div id="addTable">
+                    </div>
+                    <br>
+                    <div id="noupcoming" style="display: none;">
+                        <center>
+                            <h7>No upcoming receipts!</h7>
+                            <br>
+                            <img src="../images/professor/beach.png" width="20%">
+                        </center>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="site-cache" id="site-cache"></div>
+    </div>
+</div>
+
+
+<script src="../js/jquery-1.11.1.js"></script>
+<script src="../js/index.js"></script>
+<script src="../js/touchswipe.js"></script>
+
+
+<!--===============================================================================================-->
+<script src="../vendor/jquery/jquery-3.2.1.min.js"></script>
+
+<script src="../js/main.js"></script>
+
+
+<script>
+
+
+    function addTable(profName, date, time, notes, status, address, room, i) {
+
+        if (status == 0) {
+            imgPath = '<img src="../images/calendarWait.png" height=32px width=32px>';
+        } else {
+            imgPath = '<img src="../images/calendarPassed.png" height=32px width=32px>';
+        }
+        var html = '<br><table id="table' + i + '"><thead><tr><th scope="col">Professor</th><th scope="col">Date</th><th scope="col">Address</th><th scope="col">Room</th></tr></thead><tbody><tr><td data-label="Professor">' + profName + '</td><td data-label="Date">' + date + '</td><td data-label="Time">' + time + '</td><td data-label="Address">' + address + '</td><td data-label="Room">' + room + '</td></tr></tbody></table>';
+        document.getElementById("addTable").innerHTML += html;
+    }
+
+    function addCaption() {
+        document.getElementById("addTable").innerHTML += '<br><h4 align="center">Incoming Receipts</h4>';
+    }
+
+    function addCaptionNoFetch() {
+        document.getElementById("noupcoming").style.display = "inline";
+    }
+
+    function addCaptionNoIncoming() {
+        document.getElementById("noupcoming").style.display = "inline";
+    }
+
+    function daysInMonth(month, year) {
+        return new Date(year, month, 0).getDate();
+    }
+
+    function actualDay() {
+        var today = new Date();
+        return today.getDate();
+    }
+
+    function actualMonth() {
+        var month = new Date();
+        return month.getMonth() + 1;
+    }
+
+    function actualYear() {
+        var year = new Date();
+        return year.getFullYear();
+    }
+
+</script>
+
+<script>
+
+    $(document).ready(function (e) {
+
+        var studentEmail = localStorage.getItem("email");
+
+        $.ajax({
+            type: 'GET',
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/verifySession.php',
+            crossDomain: true,
+            cache: false,
+            success: function (data) {
+                if (data == "false") {
+                    window.location.href = "../index.html";
+                }
+            }
+        });
+
+        edit(localStorage.getItem("color"));
+
+    });
+
+    var studentEmail = localStorage.getItem("email");
+    $.ajax({
+        type: 'GET',
+        url: 'http://gemelligiuntinihci.altervista.org/myPHP/student/homepage.php',
+        crossDomain: true,
+        cache: false,
+        data: {studentEmail},
+        success: function (data) {
+
+            if (data == 0) {
+                document.getElementById("profContainer").innerHTML += '<center><h7>No preferences! <br><a href="find_professor.html" style="text-decoration: underline">Click here</a> to find professors.</h7></center>';
+            } else {
+                var parts = data.split('-');
+                parts.splice(-1, 1);
+                var profID;
+
+                for (i = 0; i < parts.length / 4; i++) {
+
+                    var prefDiv = document.createElement("div");
+                    prefDiv.style.marginBottom = "25px";
+                    prefDiv.id = "prof" + i;
+                    document.getElementById("profContainer").appendChild(prefDiv);
+
+                    var left = document.createElement("div");
+                    left.style.width = "40%";
+                    left.style.float = "left";
+
+                    prefDiv.appendChild(left);
+
+                    if (parts[i * 3 + 2] == "m") {
+                        left.innerHTML += '<img src="../images/professor.png" class="img_profile" width="40%">';
+                    } else {
+                        left.innerHTML += '<img src="../images/woman.png" class="img_profile" width="40%">';
+                    }
+
+
+                    profID = parts[i * 3 + 3];
+
+                    parts.splice(i * 3 + 2, 1);
+
+                    var nameteaching = document.createElement("div");
+                    nameteaching.style.width = "40%";
+                    nameteaching.style.float = "left";
+                    prefDiv.appendChild(nameteaching);
+
+                    var name = document.createElement("div");
+                    var surname = document.createElement("div");
+
+                    surname.style.fontWeight = "bold";
+                    name.style.fontSize = "90%";
+                    name.innerHTML += parts[i * 3];
+                    surname.innerHTML += parts[i * 3 + 1];
+
+                    nameteaching.appendChild(surname);
+                    nameteaching.appendChild(name);
+
+                    var last = document.createElement("div");
+                    last.style.width = "20%";
+                    last.style.float = "left";
+                    last.style.verticalAlign = "middle";
+
+                    prefDiv.appendChild(last);
+
+                    last.innerHTML += '<a href="ricevimenti.html?profID=' + profID + '"><img src="../images/right-arrow.png" class="img_profile" width="30%"></a><br><br><br>';
+                }
+            }
+        }
+    });
+
+    addCaption();
+
+    var studentEmail = localStorage.getItem("email");
+
+    $.ajax({
+        type: 'GET',
+        url: 'http://gemelligiuntinihci.altervista.org/myPHP/student/homepageReceipts.php',
+        crossDomain: true,
+        cache: false,
+        data: {studentEmail},
+        success: function (data) {
+            if (data == "failed") {
+                addCaptionNoFetch();
+            } else {
+                var parts = data.split(',');
+                parts.splice(-1, 1);
+
+                var date = parts[1].split('-');
+                var d = actualDay();
+                var m = actualMonth();
+                var y = actualYear();
+
+                var incoming = false;
+
+
+                for (i = 0; i < parts.length / 7; i++) {
+                    if (parseInt(date[2]) >= parseInt(d)) {
+                        if (parseInt(date[0]) == parseInt(y)) {
+                            addTable(parts[i * 7], parts[i * 7 + 1], parts[i * 7 + 2], parts[i * 7 + 3], parts[i * 7 + 4], parts[i * 7 + 5], parts[i * 7 + 6], i);
+                            incoming = true;
+                        }
+                    } else {
+                        if (parseInt(date[1]) > parseInt(m) && parseInt(date[0]) == parseInt(y)) {
+                            addTable(parts[i * 7], parts[i * 7 + 1], parts[i * 7 + 2], parts[i * 7 + 3], parts[i * 7 + 4], parts[i * 7 + 5], parts[i * 7 + 6], i);
+                            incoming = true;
+                        }
+                    }
+                }
+
+                if (incoming == false) {
+                    addCaptionNoIncoming();
+                }
+            }
+        }
+    });
+
+    $.ajax({
+        type: 'GET',
+        url: 'http://gemelligiuntinihci.altervista.org/myPHP/student/checkMessages.php',
+        crossDomain: true,
+        cache: false,
+        data: {studentEmail},
+        async: false,
+        success: function (data) {
+            if (data == "message") {
+                alert("There are new messages!");
+                window.location.href = "messages.html";
+            }
+        }
+    });
+
+</script>
+</body>
+</html>

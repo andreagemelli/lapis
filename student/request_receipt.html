@@ -1,0 +1,242 @@
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../css/util.css">
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
+    <!--===============================================================================================-->
+</head>
+
+<body>
+<div class="site-container">
+    <div class="site-pusher">
+
+        <header class="header" id="head">
+
+            <a href="#" class="header__icon" id="header__icon"></a>
+            <a href="request_receipt.html" class="header__logo">Request Receipt</a>
+
+            <nav class="menu" id="menu">
+                <div id="logo"><img class="img2" src="../images/lapis/menu.png" width="70%"></div>
+                <a href="homepage.html">Home<img src="../images/student/homepage.png" height=24px width=24px></a>
+                <a href="find_professor.html">Find professor<img src="../images/student/teacher.png" height=24px
+                                                                 width=24px></a>
+                <a href="profile.html">Profile<img src="../images/student/user.png" height=24px width=24px></a>
+                <a href="messages.html">Messages<img src="../images/student/mail.png" height=24px width=24px></a>
+                <a href="about_us.html">Contact us<img height=24px src="../images/student/support.png" width=24px></a>
+                <a href="../logout.html">Log out<img src="../images/student/logout.png" height=24px width=24px></a>
+                <div id="footer">Version 1.0</div>
+            </nav>
+        </header>
+        <div class="site-content">
+            <div class="container">
+                <div class="limiter">
+                    <div id="daysDetails">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="site-cache" id="site-cache"></div>
+    </div>
+</div>
+
+<script src="../js/jquery-1.11.1.js"></script>
+<script src="../js/index.js"></script>
+
+<!--===============================================================================================-->
+<script src="../vendor/jquery/jquery-3.2.1.min.js"></script>
+
+<script src="../js/main.js"></script>
+
+<script>
+    var time = "";
+
+    function setTime(times) {
+        time = times;
+    }
+</script>
+
+<script>
+    $(document).ready(function () {
+
+        $.ajax({
+            type: 'GET',
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/verifySession.php',
+            crossDomain: true,
+            cache: false,
+            success: function (data) {
+                if (data == "false") {
+                    window.location.href = "../index.html";
+                }
+            }
+
+        });
+
+
+        edit(localStorage.getItem("color"));
+
+        var profID = localStorage.getItem("profID");
+        var teaching = localStorage.getItem("teaching");
+        var times;
+
+        $.ajax({
+            type: 'GET',
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/student/verifyViabilityCalendar.php',
+            crossDomain: true,
+            cache: false,
+            async : false,
+            data: {profID, teaching},
+            success: function (data) {
+                if (data == "failed") {
+
+                } else {
+                    times = data.split(',');
+                    times.splice(-1, 1);
+                    setTime(times)
+                }
+            }
+        });
+
+
+        var day = localStorage.getItem("dayOfWeek");
+        var start = localStorage.getItem("start");
+        var end = localStorage.getItem("end");
+        var range = localStorage.getItem("range");
+
+
+        document.getElementById("daysDetails").innerHTML += '<br><h4 align="center">Receipt for ' + day + '</h4>';
+
+        //Parse In
+        var parseIn = function (date_time) {
+            var d = new Date();
+            d.setHours(date_time.substring(0, 2));
+            d.setMinutes(date_time.substring(3, 5));
+
+            return d;
+        };
+
+        //make list
+        var getTimeIntervals = function (time1, time2) {
+            var arr = [];
+            while (time1 < time2) {
+                arr.push(time1.toTimeString().substring(0, 5));
+                time1.setMinutes(time1.getMinutes() + parseInt(range, 10));
+            }
+            return arr;
+        };
+
+        var startTime = parseIn(start);
+        var endTime = parseIn(end);
+
+
+        var intervals = getTimeIntervals(startTime, endTime);
+
+        document.getElementById("daysDetails").innerHTML += '<br><center><img src="../images/clock.png" class="img_profile" width="20%"></center><br>';
+
+
+        for (i = 0; i < time.length; i++) {
+            time[i] = time[i].slice(0, -3);
+        }
+
+
+        var bool;
+        var l = 0;
+
+        var html = '<center><div class="select"><select id="hours">';
+
+        for (i = 0; i < intervals.length; i++) {
+            bool = false;
+            for (j = 0; j < time.length; j++) {
+                if (intervals[i] == time[j]) {
+                    bool = true;
+                }
+            }
+            if (bool == false) {
+                //var html = '<input type="radio" style="vertical-align: middle" name="teaching" value="' + intervals[i] + '" id="radio' + i + '" class="form-radio m-b-25"><label for="radio' + i + '">' + intervals[i] + '</label>';
+                html += '<option value="' + intervals[i] + '">'+ intervals[i] + '</option>';
+                //document.getElementById("daysDetails").innerHTML += html;
+                l++;
+            }
+        }
+
+        html += '</select></div></center>';
+
+        document.getElementById("daysDetails").innerHTML += html;
+
+        localStorage.setItem("lengthintervals", String(l));
+
+        document.getElementById("daysDetails").innerHTML += '<br><center><img src="../images/story.png" width="20%"></center>';
+
+        var html = '<div class="wrap-input100 validate-input m-t-10 m-b-15" data-validate="Enter notes">\n' +
+            '                                    <input class="input100" type="text" maxlength="100" name="notes" id="notes">\n' +
+            '                                    <span class="focus-input100" data-placeholder="Notes"></span>\n' +
+            '                                </div><br>';
+        document.getElementById("daysDetails").innerHTML += html;
+
+        var html = '<div class="container-login100-form-btn m-t-30"><button class="login100-form-btn" id="firstbtn" onclick="myFunction()">Request!</button></div><br>';
+        document.getElementById("daysDetails").innerHTML += html;
+
+
+    });
+
+
+</script>
+
+
+<script>
+
+    function myFunction() {
+
+        var studentEmail = localStorage.getItem("email");
+        var userID = localStorage.getItem("profID");
+        var start;
+
+        /*
+        for (j = 0; j < parseInt(localStorage.getItem("lengthintervals")); j++) {
+            if (document.getElementById("radio" + j).checked) {
+                start = document.getElementById("radio" + j).value;
+            }
+        }*/
+
+        var e = document.getElementById("hours");
+        start = e.options[e.selectedIndex].value;
+
+        var teaching = localStorage.getItem("teaching");
+        var notes = document.getElementById("notes").value;
+
+        var date = new Date();
+        var week = localStorage.getItem("dayOfWeekInt");
+
+        date.setDate(date.getDate() + (parseInt(week) + 7 - date.getDay()) % 7);
+        var d = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+
+        var status = 1;
+
+
+        $.ajax({
+            type: 'GET',
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/student/insertReceipt.php',
+            crossDomain: true,
+            //async: false,
+            cache: false,
+            data: {userID, studentEmail, start, notes, teaching, d, status, week},
+            success: function (data) {
+
+                if (data == "success") {
+                    alert("Receipt has been booked!");
+                    window.location.href = "prof_receipt_summary.html";
+                } else if (data == "failed1") {
+                    alert("error1");
+                    window.location.href = "homepage.html";
+                } else if (data == "booked") {
+                    alert("Already booked");
+                    window.location.href = "prof_receipt_summary.html";
+                }
+
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,349 @@
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../css/util.css">
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
+    <!--===============================================================================================-->
+</head>
+
+<body>
+<div class="site-container">
+    <div class="site-pusher">
+
+        <header class="header" id="head">
+
+            <a href="#" class="header__icon" id="header__icon"></a>
+            <a href="homepage.html" class="header__logo">Homepage</a>
+
+            <nav class="menu" id="menu">
+
+                <div id="logo"><center><img src="../images/lapis/menu.png" width="80%"></center></div>
+                <a style="font-weight: bold;">Homepage<img src="../images/student/homepage.png" height=24px width=24px></a>
+                <a href="calendar.html">Calendar<img src="../images/professor/calendar.png" height=24px width=24px></a>
+                <a href="profile.html">Profile<img src="../images/student/user.png" height=24px width=24px></a>
+                <a href="about_us.html">Contact us<img height=24px src="../images/student/support.png" width=24px></a>
+                <a href="../logout.html">Log out<img src="../images/student/logout.png" height=24px width=24px></a>
+                <div id="footer">Version 1.0</div>
+            </nav>
+        </header>
+
+        <div class="site-content">
+            <div class="container">
+                <div class="limiter">
+                    <br>
+                    <h4 align="center">Today Receipts</h4>
+
+                    <div id="today" align="center"></div>
+                    <br>
+
+                    <div id="today_receipts" align="center">
+                    </div>
+
+                    <div id="notoday" style="display: none;">
+                        <center>
+                            <h7>Today is free!</h7>
+                            <br>
+                            <img src="../images/professor/beach.png" width = "20%">
+                        </center>
+                    </div>
+                    <br>
+
+                    <h4 align="center">Upcoming Receipts</h4>
+                    <br>
+
+                    <div id="upcoming_receipts" align="center"></div>
+                    <div id="noupcoming" style="display: none;">
+                        <center>
+                            <h7>No upcoming receipts!</h7>
+                            <br>
+                            <img src="../images/professor/beach.png" width = "20%">
+                        </center>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="site-cache" id="site-cache"></div>
+    </div>
+</div>
+
+
+<script src="../js/jquery-1.11.1.js"></script>
+<script src="../js/index.js"></script>
+
+<!--===============================================================================================-->
+<script src="../vendor/jquery/jquery-3.2.1.min.js"></script>
+
+<script src="../js/main.js"></script>
+<script src="../cordova.js"></script>
+
+<script>
+
+    function getDateAndTime() {
+
+        var d = new Date();
+        var day = d.getDate();
+        if (parseInt(day) < 10){day = "0" + day;}
+        var month = parseInt(d.getMonth()) + 1;
+        if (month < 10){month = "0" + month;}
+        var year = d.getFullYear();
+        var h = d.getHours();
+        var m = d.getMinutes();
+        var s = d.getSeconds();
+        var result = year + "-" + month + "-" + day + " " + h + ":" + m + ":" + s;
+
+        return result;
+    }
+
+    function printDate() {
+
+        var d = new Date();
+        var dayOfWeek = d.getDay();
+        var dayOfMonth = d.getDate();
+        var month = d.getMonth();
+
+        //translate the day of week
+        if (dayOfWeek == 1) {
+            dayOfWeek = 'Monday';
+        } else if (dayOfWeek == 2) {
+            dayOfWeek = 'Tuesday';
+        } else if (dayOfWeek == 3) {
+            dayOfWeek = 'Wednesday';
+        } else if (dayOfWeek == 4) {
+            dayOfWeek = 'Thursday';
+        } else if (dayOfWeek == 5) {
+            dayOfWeek = 'Friday';
+        } else if (dayOfWeek == 6) {
+            dayOfWeek = 'Saturday';
+        } else if (dayOfWeek == 7) {
+            dayOfWeek = 'Sunday';
+        }
+
+        //translate the month
+        if (month == 0){
+            month = 'Jenuary';
+        } else if (month == 1) {
+            month = 'February';
+        } else if (month == 2) {
+            month = 'March';
+        } else if (month == 3) {
+            month = 'April';
+        } else if (month == 4) {
+            month = 'May';
+        } else if (month == 5) {
+            month = 'June';
+        } else if (month == 6) {
+            month = 'July';
+        } else if (month == 7) {
+            month = 'August';
+        } else if (month == 8) {
+            month = 'September';
+        } else if (month == 9) {
+            month = 'October';
+        } else if (month == 10) {
+            month = 'November';
+        } else if (month == 11) {
+            month = 'December';
+        }
+
+        var data = document.getElementById("today");
+        data.innerHTML = dayOfWeek + ' ' + dayOfMonth + ' ' + month;
+
+    }
+
+    function createStudent(infos, today){
+
+        var sname = infos[0];
+        var ssurname = infos[1];
+        var gender = infos[2];
+
+        var prefDiv = document.createElement("div");
+        prefDiv.class = "summary";
+        if (!today){
+            document.getElementById("upcoming_receipts").appendChild(prefDiv);
+        }
+        else {
+            document.getElementById("today_receipts").appendChild(prefDiv);
+        }
+
+        var left = document.createElement("div");
+        left.style.width = "40%";
+        left.style.float = "left";
+
+        prefDiv.appendChild(left);
+
+        if (gender == "m") {
+            left.innerHTML += '<img src="../images/student.png" class="img_profile" width="40%">';
+        } else {
+            left.innerHTML += '<img src="../images/girl.png" class="img_profile" width="40%">';
+        }
+
+        var nameteaching = document.createElement("div");
+        nameteaching.style.width = "40%";
+        nameteaching.style.float = "left";
+        prefDiv.appendChild(nameteaching);
+
+        var name = document.createElement("div");
+        var surname = document.createElement("div");
+
+        surname.style.fontWeight = "bold";
+        name.style.fontSize = "90%";
+        name.innerHTML += sname;
+        surname.innerHTML += ssurname;
+
+        nameteaching.appendChild(surname);
+        nameteaching.appendChild(name);
+
+        var last = document.createElement("div");
+        last.style.width = "20%";
+        last.style.float = "left";
+        last.style.verticalAlign = "middle";
+
+        prefDiv.appendChild(last);
+
+        last.innerHTML += '<a href="summary.html?infos=' + infos + '"><img src="../images/right-arrow.png" class="img_profile" width="30%"></a><br><br><br>';
+    }
+
+    function listStudent(email){
+        $.ajax({
+            type: 'GET',
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/professor/homepage.php',
+            crossDomain: true,
+            cache: false,
+            data: {email},
+            success: function (data) {
+                if (data == "student") {
+                    //alert("student");
+                } else if (data == "receipt"){
+                    document.getElementById("notoday").style.display = "inline";
+                    document.getElementById("noupcoming").style.display = "inline";
+                } else {
+
+                    var students = data.split(";");
+                    var today;
+                    var passed;
+                    var notoday = true;
+                    var noupcoming = true;
+
+                    // actual time
+                    var dateAndTime = getDateAndTime().split(" ");
+
+                    var date = dateAndTime[0].split("-");
+                    var time = dateAndTime[1].split(":");
+
+                    for (i = 0; i < students.length - 1 ; i++){
+                        today = false;
+                        passed = false;
+
+                        var infos = students[i].split(",");
+
+                        // time and date of student receipt
+                        var sdate = infos[8].split("-");
+                        var stime = infos[9].split(":");
+
+                        // check if actual day is equal to student receipt but the time has not come yet
+                        if ((parseInt(time[0]) < parseInt(stime[0]) || (parseInt(time[0]) === parseInt(stime[0]) &&
+                            parseInt(time[0]) >= parseInt(stime[0]))) &&
+                            parseInt(date[0]) === parseInt(sdate[0]) && parseInt(date[1]) === parseInt(sdate[1]) &&
+                            parseInt(date[2]) === parseInt(sdate[2])){
+                            // alert("today");
+                            today = true;
+                            notoday = false;
+
+                            if ((parseInt(time[0]) > parseInt(stime[0]) || (parseInt(time[0]) === parseInt(stime[0]) &&
+                                parseInt(time[1]) > parseInt(stime[1]))) &&
+                                parseInt(date[0]) === parseInt(sdate[0]) && parseInt(date[1]) === parseInt(sdate[1]) &&
+                                parseInt(date[2]) === parseInt(sdate[2])){
+
+                                //alert("passed today");
+
+                                alert("passed today");
+
+                                passed = true;
+
+                            // same day but time passed away
+                            }
+
+                            else {
+                                notoday = false;
+                            }
+
+
+                        // day of receipt older than today
+                        } else if (parseInt(date[0]) > parseInt(sdate[0]) || (parseInt(date[0]) === parseInt(sdate[0])
+                            && parseInt(date[1]) > parseInt(sdate[1])) ||
+                            (parseInt(date[1]) === parseInt(sdate[1]) && parseInt(date[2]) > parseInt(sdate[2]))){
+                            // alert("passed");
+                            passed = true;
+                        }
+
+                        if (!passed){
+                            if(!today){
+                                noupcoming = false;
+                            }
+                            createStudent(infos, today);
+                        }
+                    }
+                    if (notoday){
+                        document.getElementById("notoday").style.display = "inline";
+                    }
+                    if (noupcoming){
+                        document.getElementById("noupcoming").style.display = "inline";
+                    }
+                }
+            }
+        });
+    }
+
+</script>
+
+<script>
+
+    $(document).ready(function (e) {
+
+        $.ajax({
+            type: 'GET',
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/verifySession.php',
+            crossDomain: true,
+            cache: false,
+            success: function (data) {
+                if (data == "false") {
+                    window.location.href = "../index.html";
+                }
+            }
+        });
+
+        edit(localStorage.getItem("color"));
+
+        closeApp();
+
+        var avaiable = 0;
+        var email = localStorage.getItem("email");
+        $.ajax({
+            type: 'GET',	//Request method: GET, POST
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/professor/setAvaiable.php',  //Where to send the data
+            crossDomain: true,
+            cache: false,
+            data: {avaiable, email},
+            success: function (data) {
+                if (data != "success") {
+                    if (data == "failed")
+                        alert("Server error 1");
+                    else
+                        alert("Server error 2");
+                }
+            }
+        });
+
+
+
+        printDate();
+
+        listStudent(email);
+
+    });
+
+</script>
+
+</body>
+</html>
+

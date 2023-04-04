@@ -1,0 +1,106 @@
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../css/util.css">
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
+    <!--===============================================================================================-->
+</head>
+
+<body>
+<div class="site-container">
+    <div class="site-pusher">
+
+        <header class="header" id="head">
+
+            <a href="#" class="header__icon" id="header__icon"></a>
+            <a href="settings.html" class="header__logo">Settings</a>
+
+            <nav class="menu" id="menu">
+
+                <div id="logo"><img class="img2" src="../images/lapis/menu.png" width="70%"></div>
+                <a href="homepage.html">Homepage<img src="../images/student/homepage.png" height=24px width=24px></a>
+                <a href="calendar.html">Calendar<img src="../images/professor/calendar.png" height=24px width=24px></a>
+                <a href="profile.html">Profile<img src="../images/student/user.png" height=24px width=24px></a>
+                <a style="font-weight: bold;"> Settings<img src="../images/student/settings.png" height=24px width=24px></a>
+                <a href="../logout.html">Log out<img src="../images/student/logout.png" height=24px width=24px></a>
+                <div id="footer">Version 1.0</div>
+            </nav>
+        </header>
+
+        <div class="site-content">
+            <div class="container">
+                <div class="limiter">
+                    <br>
+
+                    <img style="float: left; margin-right: 5px" src="../images/settings.png" width="30px"><h5>Settings</h5><br>
+
+                    <div>
+                        <img style="float: left; margin: 0% 5% 5% 10%;" src="../images/paint-board-and-brush.png" width="30px">
+                        <h4 style="float: left; margin-right: 5%;">App Color: </h4>
+                        <input style="float: left; margin-right: 5%;" type="color" id="color" name="favcolor" value="#3f51b5">
+                        <img style="float: right; margin-right: 5%;" src="../images/pencil.png" width="30px" onclick="editJson()">
+                    </div>
+
+                    <br><br><br>
+
+                    <div>
+                        <img style="float: left; margin: 0% 5% 5% 10%;" src="../images/language.png" width="30px">
+                        <h4 style="float: left; margin-right: 5%;">Language: </h4>
+                        <div style="vertical-align: top;">
+                            <input style="vertical-align: middle;" type="radio" name="typeOfDegree" value="eng"
+                                   id="radio-one" class="form-radio m-b-10" checked><label for="radio-one">Eng</label>
+                            <input style="vertical-align: middle;" type="radio" value="it"
+                                   id="radio-two" class="form-radio m-b-10"><label for="radio-one">It</label>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="site-cache" id="site-cache"></div>
+    </div>
+</div>
+
+
+<script src="../js/jquery-1.11.1.js"></script>
+<script src="../js/index.js"></script>
+
+
+<!--===============================================================================================-->
+<script src="../vendor/jquery/jquery-3.2.1.min.js"></script>
+
+<script src="../js/main.js"></script>
+
+<script>
+
+    $(document).ready(function (e) {
+
+        $.ajax({
+            type: 'GET',
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/verifySession.php',
+            crossDomain: true,
+            cache: false,
+            success: function (data) {
+                if (data == "false") {
+                    window.location.href = "../index.html";
+                }
+            }
+        });
+
+
+        edit(localStorage.getItem("color"));
+
+        closeApp();
+
+    });
+
+    function editJson() {
+
+        var c = document.getElementById("color").value;
+        localStorage.setItem("color",c);
+        edit(c);
+    }
+
+</script>
+</body>
+</html>

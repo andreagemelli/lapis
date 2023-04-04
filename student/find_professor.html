@@ -1,0 +1,176 @@
+<html lang="en">
+<head>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0" name="viewport">
+    <link href="../css/util.css" rel="stylesheet" type="text/css">
+    <link href="../css/main.css" rel="stylesheet" type="text/css">
+
+    <style>
+        #show_up {
+            margin: auto;
+            width: 50%;
+            padding-left: 100px;
+            position: fixed;
+            display: none;
+
+        }
+
+        #show_up a {
+            border-bottom: 1px solid #3f51b5;
+            display: block;
+            padding: 5px;
+            text-align: center
+        }
+    </style>
+    <!--===============================================================================================-->
+</head>
+
+<body>
+
+<div class="site-container">
+    <div class="site-pusher">
+        <header class="header" id="head">
+
+            <a class="header__icon" href="#" id="header__icon"></a>
+            <a class="header__logo" href="find_professor.html">Find Professor</a>
+
+            <nav class="menu" id="menu">
+                <div id="logo">
+                    <img class="img2" src="../images/lapis/menu.png" width="70%">
+                </div>
+                <a href="homepage.html">Home<img height=24px src="../images/student/homepage.png" width=24px></a>
+                <a style="font-weight: bold;">Find professor<img height=24px src="../images/student/teacher.png"
+                                                                 width=24px></a>
+                <a href="profile.html">Profile<img height=24px src="../images/student/user.png" width=24px></a>
+                <a href="messages.html">Messages<img height=24px src="../images/student/mail.png" width=24px></a>
+                <a href="about_us.html">Contact us<img height=24px src="../images/student/support.png" width=24px></a>
+                <a href="../logout.html">Log out<img height=24px src="../images/student/logout.png" width=24px></a>
+                <div id="footer">Version 1.0</div>
+
+            </nav>
+        </header>
+
+        <div class="site-content">
+            <div class="container">
+                <div class="limiter">
+                    <div class="container-login100">
+                        <span class="login100-form-title">
+                            Find a professor
+                        </span>
+                        <form class="login100-form validate-form m-b-10">
+
+                            <h6>Filter by : </h6><br>
+                            <input checked class="form-radio m-b-15" id="radio-one" name="typeOfSearch"
+                                   style="vertical-align: middle" type="radio" value="surname"><label
+                                for="radio-one">surname</label>
+                            <br>
+                            <input class="form-radio m-b-15" id="radio-two" name="typeOfSearch"
+                                   style="vertical-align: middle"
+                                   type="radio" value="teaching"><label for="radio-two">teaching</label>
+                            <br>
+
+                            <div class="wrap-input100 validate-input m-t-15 m-b-15" data-validate="Enter professor">
+                                <input class="input100" id="search" name="professor" type="text">
+                                <span class="focus-input100" data-placeholder="Professor"></span>
+
+                            </div>
+
+                            <div id="show_up">
+
+                            </div>
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="site-cache" id="site-cache"></div>
+    </div>
+</div>
+
+
+<script src="../js/jquery-1.11.1.js"></script>
+<script src="../js/index.js"></script>
+
+
+<!--===============================================================================================-->
+<script src="../vendor/jquery/jquery-3.2.1.min.js"></script>
+
+<script src="../js/main.js"></script>
+<script src="../cordova.js"></script>
+
+<script>
+
+    $(document).ready(function (e) {
+
+        $.ajax({
+            type: 'GET',
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/verifySession.php',
+            crossDomain: true,
+            cache: false,
+            success: function (data) {
+                if (data == "false") {
+                    window.location.href = "../index.html";
+                }
+            }
+        });
+
+
+
+        edit(localStorage.getItem("color"));
+
+
+    });
+
+
+    var typeOfSearch;
+
+    $("#search").keyup(function () {
+        $("#show_up").show();
+
+        document.getElementById('search').scrollIntoView({behavior: "smooth"});
+
+        if (document.getElementById('radio-one').checked) {
+            typeOfSearch = document.getElementById('radio-one').value;
+
+        } else if (document.getElementById('radio-two').checked) {
+            typeOfSearch = document.getElementById('radio-two').value;
+
+        }
+
+        var text = $(this).val();
+
+        if (typeOfSearch == "surname") {
+            $.ajax({
+                type: 'GET',
+                url: 'http://gemelligiuntinihci.altervista.org/myPHP/student/searchBySurname.php',
+                crossDomain: true,
+                cache: false,
+                data: 'txt=' + text,
+                success: function (data) {
+                    document.getElementById("show_up").innerHTML = data;
+                }
+            });
+
+        } else {
+            $.ajax({
+                type: 'GET',
+                url: 'http://gemelligiuntinihci.altervista.org/myPHP/student/searchByTeaching.php',
+                crossDomain: true,
+                cache: false,
+                data: 'txt=' + text,
+                success: function (data) {
+                    document.getElementById("show_up").innerHTML = data;
+                }
+            });
+        }
+
+        //document.getElementById('header').scrollIntoView({block : "start"});
+
+    });
+
+
+</script>
+
+</body>
+</html>

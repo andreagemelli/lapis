@@ -1,0 +1,173 @@
+<html lang="en">
+<head>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0" name="viewport">
+    <link href="../css/util.css" rel="stylesheet" type="text/css">
+    <link href="../css/main.css" rel="stylesheet" type="text/css">
+    <!--===============================================================================================-->
+</head>
+
+<body>
+<div class="site-container">
+    <div class="site-pusher">
+
+        <header class="header" id="head">
+
+            <a class="header__icon" href="#" id="header__icon"></a>
+            <a class="header__logo" href="prof_summary.html">Professor summary</a>
+
+            <nav class="menu" id="menu">
+                <div id="logo"><img class="img2" src="../images/lapis/menu.png" width="70%"></div>
+                <a href="homepage.html">Home<img height=24px src="../images/student/homepage.png" width=24px></a>
+                <a href="find_professor.html">Find professor<img height=24px src="../images/student/teacher.png"
+                                                                 width=24px></a>
+                <a href="profile.html">Profile<img height=24px src="../images/student/user.png" width=24px></a>
+                <a href="messages.html">Messages<img height=24px src="../images/student/mail.png" width=24px></a>
+                <a href="about_us.html">Contact us<img height=24px src="../images/student/support.png" width=24px></a>
+                <a href="../logout.html">Log out<img height=24px src="../images/student/logout.png" width=24px></a>
+                <div id="footer">Version 1.0</div>
+            </nav>
+        </header>
+        <div class="site-content">
+            <div class="container">
+                <div class="limiter">
+
+                    <div id="addTable">
+                    </div>
+
+                    <div id="test"></div>
+                    <div style="text-align: center">
+
+
+                        <button onclick="myFunction()"><img height="42" src="../images/plus.png" width="42"></button>
+                        <br><h7>Add Preference</h7>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="site-cache" id="site-cache"></div>
+    </div>
+</div>
+
+
+<script src="../js/jquery-1.11.1.js"></script>
+<script src="../js/index.js"></script>
+
+<!--===============================================================================================-->
+<script src="../vendor/jquery/jquery-3.2.1.min.js"></script>
+
+<script src="../js/main.js"></script>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $.ajax({
+            type: 'GET',
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/verifySession.php',
+            crossDomain: true,
+            cache: false,
+            success: function (data) {
+                if (data == "false") {
+                    window.location.href = "../index.html";
+                }
+            }
+        });
+
+        edit(localStorage.getItem("color"));
+
+        var userID = window.location.search.substr(1);
+        var parts = userID.split('=', 2);
+        userID = parts[1];
+        localStorage.setItem("profID", userID);
+
+        $.ajax({
+            type: 'GET',
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/student/getProfSummary.php',
+            crossDomain: true,
+            cache: false,
+            data: {userID},
+            success: function (data) {
+
+                var parts = data.split('-', 4);
+
+                document.getElementById("addTable").innerHTML += '<br><h4 align="center">Professor Summary</h4><br>';
+                /*var html = '<br><table><thead><tr><th scope="col">Name</th><th scope="col">Surname</th><th scope="col">Email</th></tr></thead><tbody><tr><td data-label="Name">' + parts[0] + '</td><td data-label="Surname">' + parts[1] + '</td><td data-label="Email">' + parts[2] + '</td></tr></tbody></table>';
+                document.getElementById("addTable").innerHTML += html;*/
+                var prefDiv = document.createElement("div");
+                prefDiv.style.marginBottom = "25px";
+                prefDiv.id = "table_prof";
+                document.getElementById("addTable").appendChild(prefDiv);
+
+                var left = document.createElement("div");
+                left.style.width = "30%";
+                left.style.float = "left";
+
+                prefDiv.appendChild(left);
+
+                var gender = parts[3].replace(/\s/g, '');
+
+                if (gender == "m") {
+                    left.innerHTML += '<img src="../images/professor.png" style="vertical-align: middle;" class="img_profile" width="70%">';
+                } else {
+                    left.innerHTML += '<img src="../images/woman.png" style="vertical-align: middle;" class="img_profile" width="70%">';
+                }
+
+                var profinfo = document.createElement("div");
+                profinfo.style.width = "70%";
+                profinfo.style.float = "left";
+                prefDiv.appendChild(profinfo);
+
+                var name = document.createElement("div");
+                var email = document.createElement("div");
+                var status = document.createElement("div");
+
+                name.style.marginBottom = "5px";
+                name.innerHTML += '<img src="../images/name.png" width="8%" style="vertical-align: middle;">' + " " + parts[0] + " " + parts[1]+'</a><br>';
+                email.style.marginBottom = "5px";
+                email.innerHTML += '<img src="../images/professor/mail.png" width="8%" style="vertical-align: middle;">' + " " + parts[2] + '</a><br>';
+
+                profinfo.appendChild(name);
+                profinfo.appendChild(email);
+                var space = document.createElement("br");
+                profinfo.appendChild(space);
+
+
+            }
+        });
+
+    });
+
+
+</script>
+
+
+<script>
+    function myFunction() {
+
+        var studentEmail = localStorage.getItem("email");
+        var userID = localStorage.getItem("profID");
+
+        $.ajax({
+            type: 'GET',
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/student/createPreference.php',
+            crossDomain: true,
+            cache: false,
+            data: {userID, studentEmail},
+            success: function (data) {
+                if (data == "success") {
+                    window.location.href = "homepage.html";
+                }
+                else{
+                    alert("You already have this preference");
+                    window.location.href = "homepage.html";
+                }
+
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,139 @@
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../../css/util.css">
+    <link rel="stylesheet" type="text/css" href="../../css/main.css">
+    <!--===============================================================================================-->
+</head>
+
+<body>
+<div class="site-container">
+    <div class="site-pusher">
+
+        <header class="header">
+
+            <a href="#" class="header__logo">Evelyn App</a>
+
+        </header>
+
+        <div class="site-content">
+            <div class="container">
+                <div class="limiter">
+                    <div class="container-login100">
+                        <div class="wrap-login100 p-t-5 p-b-5">
+                            <form class="login100-form validate-form">
+                                        <span class="login100-form-title p-b-25">
+                                            Complete your registration!
+                                        </span>
+
+                                <span class="login100-form-avatar">
+                                            <img src="../../images/2.png" alt="">
+                                        </span>
+
+                                <div>
+                                    <br>
+                                    <h4 align="center">Your Main Office</h4>
+                                </div>
+
+                                <div class="wrap-input100 validate-input m-t-15 m-b-15" data-validate="Enter address">
+                                    <input class="input100" type="text" name="address" id="room">
+                                    <span class="focus-input100" data-placeholder="Room"></span>
+                                </div>
+
+                                <div class="wrap-input100 validate-input m-t-15 m-b-15" data-validate="Enter address">
+                                    <input class="input100" type="text" name="address" id="address">
+                                    <span class="focus-input100" data-placeholder="Address"></span>
+                                </div>
+
+                                <div class="wrap-input100 validate-input m-t-15 m-b-15" data-validate = "Enter number">
+                                    <input class="input100" type="text" name="number" id="number">
+                                    <span class="focus-input100" data-placeholder="Number"></span>
+                                </div>
+                                <div class="wrap-input100 validate-input m-t-15 m-b-60" data-validate="Enter city">
+                                    <input class="input100" type="text" name="city" id="city">
+                                    <span class="focus-input100" data-placeholder="City"></span>
+                                </div>
+
+                                <div class="container-login100-form-btn">
+                                    <button class="login100-form-btn" id="secondbtn">
+                                        Finish !
+                                    </button>
+                                </div>
+                            </form>
+
+                            <!-- TODO handle button event -->
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>
+
+
+<script src="../../js/jquery-1.11.1.js"></script>
+<script src="../../js/index.js"></script>
+
+
+<!--===============================================================================================-->
+<script src="../../vendor/jquery/jquery-3.2.1.min.js"></script>
+
+<script src="../../js/main.js"></script>
+
+<script>
+    $(document).ready(function (e) {
+        $.ajax({
+            type: 'GET',
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/verifySession.php',
+            crossDomain: true,
+            cache: false,
+            success: function (data) {
+                if (data == "false") {
+                    window.location.href = "../../index.html";
+                }
+            }
+        });
+    });
+
+    edit(localStorage.getItem("color"));
+</script>
+
+<script>
+
+    //Login Function
+    $("#secondbtn").click(function(){
+
+        var room = document.getElementById("room").value;
+        var address = document.getElementById("address").value;
+        var number= document.getElementById("number").value;
+        var city= document.getElementById("city").value;
+        var teaching_array = localStorage.getItem("teaching_array");
+
+        if($.trim(room).length>0 & $.trim(address).length>0 & $.trim(number).length>0 & $.trim(city).length>0)
+        {
+            $.ajax({
+                type : 'GET',	//Request method: GET, POST
+                url : 'http://gemelligiuntinihci.altervista.org/myPHP/professor/completedRegistration.php',  //Where to send the data
+                crossDomain: true,
+                cache: false,
+                data: {teaching_array, room, address, number, city},
+                success: function(data){
+                    if(data=="success")
+                    {
+                        window.location.href = "../homepage.html";
+                    }
+                    else if(data=="failed")
+                    {
+                        alert("Complete registration error");
+                        window.location.href = "../../index.html";
+                    }
+                }
+            });
+        }return false;
+    });
+
+</script>

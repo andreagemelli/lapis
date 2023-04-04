@@ -1,0 +1,127 @@
+<html lang="en">
+<head>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0" name="viewport">
+    <link href="../css/util.css" rel="stylesheet" type="text/css">
+    <link href="../css/main.css" rel="stylesheet" type="text/css">
+    <style>
+        #contacts{
+            margin-top: 10px;
+            padding: 10px;
+        }
+
+        #info{
+            width: 60%;
+            float: left;
+            margin-top: 10px;
+        }
+
+        #img_contact{
+            width: 40%;
+            float: left;
+            margin-top: 5px;
+        }
+    </style>
+    <!--===============================================================================================-->
+</head>
+
+<body>
+<div class="site-container">
+    <div class="site-pusher">
+
+        <header class="header" id="head">
+
+            <a href="#" class="header__icon" id="header__icon"></a>
+            <a href="about_us.html" class="header__logo">About Us</a>
+
+            <nav class="menu" id="menu">
+
+                <div id="logo"><img class="img2" src="../images/lapis/menu.png" width="70%"></div>
+                <a href="homepage.html">Homepage<img src="../images/student/homepage.png" height=24px width=24px></a>
+                <a style="font-weight: bold;"> Calendar<img src="../images/professor/calendar.png" height=24px width=24px></a>
+                <a href="profile.html">Profile<img src="../images/student/user.png" height=24px width=24px></a>
+                <a href="about_us.html">Contact us<img height=24px src="../images/student/support.png" width=24px></a>
+                <a href="../logout.html">Log out<img src="../images/student/logout.png" height=24px width=24px></a>
+                <div id="footer">Version 1.0</div>
+
+            </nav>
+        </header>
+
+        <div class="site-content">
+            <div class="container">
+                <div class="limiter">
+                    <center>
+                        <br>
+                        <img src="../images/support1.png" width="40%">
+                        <br>
+                        <h4>About us</h4>
+                        <em><p style="width: 80%">We are two computer science students, and we hope you are having fun with our application!
+                        If you have to report bugs or you want to know more about the project, contact one of us!
+                        </p></em>
+                    </center>
+                    <div id="contacts">
+
+                            <div id="img_contact">
+                                <img src="../images/geme.jpg" style="border-radius: 50%" width="60%">
+                            </div>
+                            <div id="info">
+                            <img src="../images/name.png" width="8%" style="vertical-align: middle;"> Andrea Gemelli <br>
+                            <img src="../images/professor/mail.png" width="8%" style="vertical-align: middle;"><a href="mailto: Andrea.gemelli@stud.unifi.it"> Send an email</a><br>
+                            </div>
+
+                    </div>
+
+                    <br><br><br>
+
+                    <div id="contacts">
+
+                        <div id="img_contact">
+                            <img src="../images/giunta.jpg" style="border-radius: 50%" width="60%">
+                        </div>
+                        <div id="info">
+                            <img src="../images/name.png" width="8%" style="vertical-align: middle;"> Andrea Giuntini <br>
+                            <img src="../images/professor/mail.png" width="8%" style="vertical-align: middle;"><a href="mailto: Andrea.giuntini@stud.unifi.it"> Send an email</a><br>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    <div class="site-cache" id="site-cache"></div>
+</div>
+</div>
+
+<script src="../js/jquery-1.11.1.js"></script>
+<script src="../js/index.js"></script>
+
+<!--===============================================================================================-->
+<script src="../vendor/jquery/jquery-3.2.1.min.js"></script>
+
+<script src="../js/main.js"></script>
+
+<script src="../cordova.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $.ajax({
+            type: 'GET',
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/verifySession.php',
+            crossDomain: true,
+            cache: false,
+            success: function (data) {
+                if (data == "false") {
+                    window.location.href = "../index.html";
+                }
+            }
+        });
+
+        edit(localStorage.getItem("color"));
+
+        closeApp();
+    });
+
+</script>
+
+</body>
+</html>

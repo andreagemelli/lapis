@@ -1,0 +1,154 @@
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../css/util.css">
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
+    <!--===============================================================================================-->
+</head>
+
+<body>
+<div class="site-container">
+    <div class="site-pusher">
+
+        <header class="header" id="head">
+
+            <a href="#" class="header__icon" id="header__icon"></a>
+            <a href="#" class="header__logo">Message</a>
+
+            <nav class="menu" id="menu">
+
+                <div id="logo"><img class="img2" src="../images/lapis/menu.png" width="70%"></div>
+                <a style="font-weight: bold;">Homepage<img src="../images/student/homepage.png" height=24px width=24px></a>
+                <a href="calendar.html">Calendar<img src="../images/professor/calendar.png" height=24px width=24px></a>
+                <a href="profile.html">Profile<img src="../images/student/user.png" height=24px width=24px></a>
+                <a href="about_us.html">Contact us<img height=24px src="../images/student/support.png" width=24px></a>
+                <a href="../logout.html">Log out<img src="../images/student/logout.png" height=24px width=24px></a>
+                <div id="footer">Version 1.0</div>
+            </nav>
+        </header>
+
+        <div class="site-content">
+            <div class="container">
+                <div class="limiter">
+                    <div id="sendMessage">
+
+                    </div>
+                    <div id="exit" style="display: none; vertical-align: middle;">
+                        <center>
+                            <img src="../images/professor/sending.gif" width="80%">
+                        </center>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="site-cache" id="site-cache"></div>
+    </div>
+</div>
+
+<script src="../js/jquery-1.11.1.js"></script>
+<script src="../js/index.js"></script>
+
+<!--===============================================================================================-->
+<script src="../vendor/jquery/jquery-3.2.1.min.js"></script>
+
+<script src="../js/main.js"></script>
+<script src="../cordova.js"></script>
+<script>
+    $(document).ready(function () {
+
+        $.ajax({
+            type: 'GET',
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/verifySession.php',
+            crossDomain: true,
+            cache: false,
+            success: function (data) {
+                if (data == "false") {
+                    window.location.href = "../index.html";
+                }
+            }
+        });
+
+        edit(localStorage.getItem("color"));
+
+        closeApp();
+
+        var student_name = localStorage.getItem("student_name");
+
+        document.getElementById("sendMessage").innerHTML += '<br><center><img src="../images/professor/send.png" width="50%"></center>';
+
+        var html = '<div class="wrap-input100 validate-input m-t-15 m-b-15" data-validate="Enter notes">\n' +
+            '       <input class="input100" type="text" maxlength="250" name="message" id="message">\n' +
+            '       <span class="focus-input100" data-placeholder="Message"></span>\n' +
+            '       </div><br>';
+        document.getElementById("sendMessage").innerHTML += html;
+
+        var html = '<div class="container-login100-form-btn m-t-30"><button class="login100-form-btn" id="firstbtn" onclick="send()">Send a message to '+student_name+'</button></div><br>';
+        document.getElementById("sendMessage").innerHTML += html;
+
+
+    });
+
+
+</script>
+
+<script>
+
+    function getDateAndTime() {
+        var d = new Date();
+        var day = d.getDate();
+        if (parseInt(day) < 10){day = "0" + day;}
+        var month = parseInt(d.getMonth()) + 1;
+        if (month < 10){month = "0" + month;}
+        var year = d.getFullYear();
+        var h = d.getHours();
+        var m = d.getMinutes();
+        var s = d.getSeconds();
+        var result = year + "-" + month + "-" + day + " " + h + ":" + m + ":" + s;
+
+        return result;
+    }
+
+    function send() {
+
+        document.getElementById("sendMessage").style.display = "none";
+        document.getElementById("exit").style.display = "inline";
+
+        var prof_email = localStorage.getItem("email");
+        var student_email = localStorage.getItem("student_email");
+
+        var dayAndHour = getDateAndTime();
+
+        var date = dayAndHour.split(" ")[0];
+        var time = dayAndHour.split(" ")[1];
+        var message = document.getElementById("message").value;
+
+        if (message == ""){
+            alert("Insert a message!");
+            window.location.href = "send_message.html";
+        }
+
+        $.ajax({
+            type: 'GET',
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/professor/sendMessage.php',
+            crossDomain: true,
+            async: false,
+            cache: false,
+            data: {prof_email, student_email, date, time, message},
+            success: function (data) {
+                if(data=="failed"){
+                    alert("failed");
+                }
+                else{
+                    setTimeout(function(){
+                        window.location.href = "homepage.html";
+                    }, 1700); // time to complete gif
+                }
+
+
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

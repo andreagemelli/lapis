@@ -1,0 +1,163 @@
+<html lang="en">
+<head>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0" name="viewport">
+    <link href="../css/util.css" rel="stylesheet" type="text/css">
+    <link href="../css/main.css" rel="stylesheet" type="text/css">
+    <!--
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+-->
+    <!--===============================================================================================-->
+</head>
+
+<body>
+<div class="site-container">
+    <div class="site-pusher">
+
+        <header class="header" id="head">
+
+            <a class="header__icon" href="#" id="header__icon"></a>
+            <a class="header__logo" href="messages.html">Messages</a>
+
+            <nav class="menu" id="menu">
+                <div id="logo"><img class="img2" src="../images/lapis/menu.png" width="70%"></div>
+                <a href="homepage.html">Home<img height=24px src="../images/student/homepage.png" width=24px></a>
+                <a href="find_professor.html">Find professor<img height=24px src="../images/student/teacher.png"
+                                                                 width=24px></a>
+                <a href="profile.html">Profile<img height=24px src="../images/student/user.png" width=24px></a>
+                <a style="font-weight: bold;">Messages<img height=24px src="../images/student/mail.png" width=24px></a>
+                <a href="about_us.html">Contact us<img height=24px src="../images/student/support.png" width=24px></a>
+                <a href="../logout.html">Log out<img height=24px src="../images/student/logout.png" width=24px></a>
+                <div id="footer">Version 1.0</div>
+            </nav>
+        </header>
+
+        <div class="site-content">
+            <div class="container">
+                <div class="limiter">
+                    <div id="addTable">
+                    </div>
+                    <br>
+                    <div id="message">
+                    </div>
+                    </br>
+                </div>
+            </div>
+        </div>
+        <div class="site-cache" id="site-cache"></div>
+    </div>
+</div>
+
+
+<script src="../js/jquery-1.11.1.js"></script>
+<script src="../js/index.js"></script>
+
+
+<script src="../vendor/jquery/jquery-3.2.1.min.js"></script>
+<script src="../js/main.js"></script>
+
+<script type="text/javascript">
+
+    function addMessage(profName, profSurname, message, date, time, messageId, i) {
+        if (date != localStorage.getItem("datenow"))
+            document.getElementById("message").innerHTML += '<br><em><h7 align="center">'+date+'</h7></em><br>';
+        var divID = "message"+i;
+        var html = '<div class="message-blue" id="'+divID+'"><p class="message-content">' + message + '</p><div class="message-timestamp-left">' + time + " " + profSurname + '</div>' +
+            '<div class="message-timestamp-right"><button id = "'+ messageId +'" onclick="getDiv(id)">' +
+            '<img src="../images/remove.png" width="16px" height="16px"></button></div></div>';
+        document.getElementById("message").innerHTML += html;
+    }
+
+    function addCaption() {
+        document.getElementById("addTable").innerHTML += '<br><h4 align="center">Messages received</h4>';
+    }
+
+    function addCaptionNoFetch() {
+        document.getElementById("addTable").innerHTML += '<center><br><h4 align="center">No messages found</h4><br>\n' +
+            '                            <img src="../images/nomessage.png" width="20%"><br><br><div style="width: 50%"><h7 align="center" ><em>It does not mean you are not important!</em></h7></center></div>';
+    }
+
+    function getDiv(id){
+        var r = confirm("Delete message ?");
+        if (r == true) {
+            $.ajax({
+                type: 'GET',
+                url: 'http://gemelligiuntinihci.altervista.org/myPHP/student/deleteMessage.php',
+                crossDomain: true,
+                cache: false,
+                data: {id},
+                success: function (data) {
+                    if (data == "success") {
+                        window.location.href = "messages.html";
+                    } else {
+                        alert("error");
+                    }
+                }
+            });
+        }
+    }
+
+</script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        var studentEmail = localStorage.getItem("email");
+
+        $.ajax({
+            type: 'GET',
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/verifySession.php',
+            crossDomain: true,
+            cache: false,
+            success: function (data) {
+                if (data == "false") {
+                    window.location.href = "../index.html";
+                }
+            }
+        });
+
+        edit(localStorage.getItem("color"));
+
+        $.ajax({
+            type: 'GET',
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/student/updateMessages.php',
+            crossDomain: true,
+            cache: false,
+            data: {studentEmail},
+            success: function (data) {
+
+            }
+        });
+
+        $.ajax({
+            type: 'GET',
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/student/getMessages.php',
+            crossDomain: true,
+            cache: false,
+            data: {studentEmail},
+            success: function (data) {
+                data = data.replace(/\s/g, '');
+                if (data == "nomessages") {
+                    addCaptionNoFetch();
+                } else {
+                    addCaption();
+                    var parts = data.split(',');
+                    parts.splice(-1, 1);
+                    localStorage.setItem("datenow", parts[3]);
+                    document.getElementById("message").innerHTML += '<em><h7 align="center">'+parts[3]+'</h7></em><br>';
+                    for (i = 0; i < parts.length / 6; i++) {
+                        addMessage(parts[i * 6], parts[i * 6 + 1], parts[i * 6 + 2], parts[i * 6 + 3], parts[i * 6 + 4],parts[i * 6 + 5], i);
+                        localStorage.setItem("datenow", parts[i * 6 + 3]);
+                    }
+                }
+            }
+        });
+
+    });
+
+
+</script>
+
+</body>
+</html>
