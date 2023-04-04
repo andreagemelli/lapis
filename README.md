@@ -1,3 +1,4 @@
+<p align="center"><img src="images/lapis/logo.png" width="200" height="200"></p>
 Lapis 🐝 is a mobile application that provides a meeting manager for professors and students within the university world, where a student can get insights and contents about courses held by a professor. <br>
 <ul>
 <li>Human Computer Interaction exam project.</li>
