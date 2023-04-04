@@ -1,0 +1,161 @@
+<html lang="en">
+<head>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0" name="viewport">
+    <link href="css/util.css" rel="stylesheet" type="text/css">
+    <link href="css/main.css" rel="stylesheet" type="text/css">
+    <!--===============================================================================================-->
+</head>
+
+<body>
+<div class="site-container">
+    <div class="site-pusher">
+
+        <header class="header">
+
+            <a class="header__icon" href="#" id="header__icon"></a>
+            <a class="header__logo" href="#">SignUp</a>
+
+            <nav class="menu">
+                <a href="index.html">Login</a>
+                <!--<a href="ricevimenti.html">Ricevimenti</a>
+<a href="professori.html">Professori</a> -->
+            </nav>
+
+        </header>
+
+        <div class="site-content">
+            <div class="container">
+
+                <div class="limiter">
+                    <div class="container-login100">
+                        <div class="wrap-login100 p-t-5 p-b-5">
+                            <form class="login100-form validate-form">
+                                        <span class="login100-form-title p-b-25">
+                                            Sign Up!
+                                        </span>
+
+                                <div class="wrap-input100 validate-input m-t-15 m-b-15" data-validate="Enter name">
+                                    <input class="input100" id="name" name="name" type="text">
+                                    <span class="focus-input100" data-placeholder="Name"></span>
+                                </div>
+
+                                <div class="wrap-input100 validate-input m-t-15 m-b-15" data-validate="Enter surname">
+                                    <input class="input100" id="surname" name="surname" type="text">
+                                    <span class="focus-input100" data-placeholder="Surname"></span>
+                                </div>
+                                <div>
+                                    <br>
+                                    <h7 align="center">Gender:</h7>
+                                    <br><br>
+                                    <input checked class="form-radio m-b-15"
+                                           id="radio-one" name="typeOfDegree"
+                                           style="vertical-align: middle; margin-left: 10%;" type="radio" value="f"><label for="radio-one">female</label><br>
+                                    <input class="form-radio m-b-15 " id="radio-two"
+                                           name="typeOfDegree" style="vertical-align: middle; margin-left: 10%;"
+                                           type="radio" value="m"><label for="radio-one">male</label>
+                                </div>
+                                <div class="wrap-input100 validate-input m-b-15" data-validate="Enter email">
+                                    <input class="input100" id="email" name="email" type="text">
+                                    <span class="focus-input100" data-placeholder="Email"></span>
+                                </div>
+                                <div class="wrap-input100 validate-input m-t-15 m-b-15" data-validate="Enter password">
+                                    <input class="input100" id="pass" name="pass" type="password">
+                                    <span class="focus-input100" data-placeholder="Password"></span>
+                                </div>
+                                <div class="wrap-input100 validate-input m-t-15 m-b-60" data-validate="Enter password">
+                                    <input class="input100" id="pass1" name="pass1" type="password">
+                                    <span class="focus-input100" data-placeholder="Repeat password"></span>
+                                </div>
+                                <br>
+                                <div class="container-login100-form-btn">
+                                    <button class="login100-form-btn" id="signup">
+                                        Sign Up
+                                    </button>
+                                </div>
+
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div id="dropDownSelect1"></div>
+
+            </div> <!-- END container -->
+        </div> <!-- END site-content -->
+        <div class="site-cache" id="site-cache"></div>
+    </div>
+</div>
+
+<script src="js/jquery-1.11.1.js"></script>
+<script src="js/index.js"></script>
+
+<!--===============================================================================================-->
+<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
+
+<script src="js/main.js"></script>
+
+<script>
+
+
+    //Login Function
+    $("#signup").click(function () {
+
+        //to do signup
+        var type = 2;
+        var name = document.getElementById("name").value;
+        var surname = document.getElementById("surname").value;
+        var gender;
+        if (document.getElementById('radio-one').checked) {
+            gender = document.getElementById('radio-one').value;
+        } else if (document.getElementById('radio-two').checked) {
+            gender = document.getElementById('radio-two').value;
+        }
+        var email = document.getElementById("email").value;
+        var password = document.getElementById("pass").value;
+        var password2 = document.getElementById("pass1").value;
+        if (email.indexOf("@unifi.it") >= 0) {
+            // alert(name + " is a professor.");
+            type = 0;
+        } else if (email.indexOf("@stud.unifi.it") >= 0) {
+            // alert(name + " is a student.");
+            type = 1;
+        } else {
+            alert("Not a UniFi Email");
+        }
+
+        localStorage.setItem("email", email);
+
+        if ($.trim(name).length > 0 & $.trim(surname).length > 0 & $.trim(gender).length > 0 & $.trim(email).length > 0 & $.trim(password).length > 0 & $.trim(password2).length > 0 & type != 2) {
+            if (password == password2) {
+                $.ajax({
+                    type: 'GET',	//Request method: GET, POST
+                    url: 'http://gemelligiuntinihci.altervista.org/myPHP/signup.php',  //Where to send the data
+                    crossDomain: true,
+                    cache: false,
+                    data: {type, name, gender, surname, email, password},
+                    success: function (data) {
+                        //alert(data);
+                        if (data == "success") {
+                            /*localStorage.login="true";
+                            localStorage.email=email;*/
+                            window.location.href = "verifyEmail.html";
+                        } else if (data = "failed") {
+                            alert("Signup error");
+                            /*$("#login").html('Login');*/
+                        }
+                    }
+                });
+            } else {
+                alert("Error repeating password!");
+            }
+        }
+        return false;
+
+    });
+</script>
+
+
+</body>
+</html>

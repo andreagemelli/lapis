@@ -1,0 +1,108 @@
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="css/util.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <!--===============================================================================================-->
+</head>
+
+<body>
+<div class="site-container">
+    <div class="site-pusher">
+
+        <header class="header">
+
+
+            <a href="#" class="header__logo">Lapis</a>
+
+
+        </header>
+
+        <div class="site-content">
+            <div class="container">
+                <div class="limiter">
+                    <div class="container-login100">
+                        <div class="wrap-login100 p-t-5 p-b-5">
+                            <form class="login100-form validate-form">
+                                        <span class="login100-form-title p-b-15">
+                                            Insert your code
+                                        </span>
+
+                                <div class="wrap-input100 validate-input m-t-15 m-b-60"
+                                     data-validate="Enter email code">
+                                    <input class="input100" type="text" name="code" id="code">
+                                    <span class="focus-input100" data-placeholder="Code"></span>
+                                </div>
+
+                                <div class="container-login100-form-btn">
+                                    <button class="login100-form-btn" id="verify">
+                                        Verify me!
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="js/jquery-1.11.1.js"></script>
+<script src="js/index.js"></script>
+
+
+<!--===============================================================================================-->
+<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
+
+<script src="js/main.js"></script>
+
+<script>
+
+
+    //Login Function
+    $("#verify").click(function () {
+
+        //to do signup
+        var email = localStorage.getItem("email");
+        var code = document.getElementById("code").value;
+
+        if ($.trim(email).length > 0 & $.trim(code).length > 0) {
+
+            $.ajax({
+                type: 'GET',	//Request method: GET, POST
+                url: 'http://gemelligiuntinihci.altervista.org/myPHP/verifyCode.php',  //Where to send the data
+                crossDomain: true,
+                cache: false,
+                data: {email, code},
+                success: function (data) {
+                    if (data == "success") {
+                        $.ajax({
+                            type: 'GET',	//Request method: GET, POST
+                            url: 'http://gemelligiuntinihci.altervista.org/myPHP/insertVerification.php',  //Where to send the data
+                            crossDomain: true,
+                            cache: false,
+                            data: {email},
+                            success: function (data) {
+                                if (data == "0") {
+                                    window.location.href = "professor/first_login/teaching.html";
+                                } else if (data == "1") {
+                                    window.location.href = "student/first_login/general_info.html";
+                                } else if (data == "failed") {
+                                    alert("Server error");
+                                }
+                            }
+                        });
+                    } else if (data = "failed") {
+                        alert("Code error, try again");
+                    }
+                }
+            });
+        }
+        return false;
+
+    });
+</script>
+
+
+</body>
+</html>

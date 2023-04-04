@@ -1,0 +1,109 @@
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="css/util.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <!--===============================================================================================-->
+</head>
+
+<body>
+<div class="site-container">
+    <div class="site-pusher">
+
+        <header class="header">
+
+        </header>
+
+        <div class="site-content">
+            <div class="container">
+
+                <div class="limiter">
+                    <div class="container-login100">
+                        <div class="wrap-login100 p-t-5 p-b-5">
+                            <form class="login100-form validate-form">
+                                <span class="login100-form-title p-b-25">
+                                    <center>
+                                        <h4>Logging out ...<h4>
+                                            <img src="images/loading.gif" width="80%">
+                                    </center>
+                                </span>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div> <!-- END container -->
+        </div> <!-- END site-content -->
+    </div>
+</div>
+
+<script src="js/jquery-1.11.1.js"></script>
+<script src="js/index.js"></script>
+
+<!--===============================================================================================-->
+<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
+
+<script src="js/main.js"></script>
+
+<script>
+
+
+    $(document).ready(function () {
+        var avaiable = 1;
+        var email = localStorage.getItem("email");
+
+        $.ajax({
+            type: 'GET',
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/getType.php',
+            crossDomain: true,
+            cache: false,
+            data: {email},
+            success: function (data) {
+                if (data != "false") {
+
+                    $.ajax({
+                        type: 'GET',	//Request method: GET, POST
+                        url: 'http://gemelligiuntinihci.altervista.org/myPHP/professor/setAvaiable.php',  //Where to send the data
+                        crossDomain: true,
+                        cache: false,
+                        data: {avaiable, email},
+                        success: function (data) {
+                            if (data != "success") {
+                                if (data == "failed")
+                                    alert("Server error 1");
+                                else
+                                    alert("Server error 2");
+                            }
+                        }
+                    });
+
+                }
+
+            }
+        });
+
+
+        $.ajax({
+            type: 'GET',
+            url: 'http://gemelligiuntinihci.altervista.org/myPHP/destroySession.php',
+            crossDomain: true,
+            cache: false,
+            success: function (data) {
+                if (data == "true") {
+                    //alert('Logout avvenuto con successo!');
+                    setTimeout(function(){
+                        window.location.href = "index.html";
+                    }, 500); // time to complete gif
+
+                }
+            }
+        });
+
+    });
+
+</script>
+
+
+</body>
+</html>

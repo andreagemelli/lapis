@@ -1,0 +1,130 @@
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="css/util.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <!--===============================================================================================-->
+</head>
+
+<body>
+
+
+
+            <div class="container">
+                <div class="limiter">
+                    <div class="container-login100">
+                        <div class="wrap-login100 p-t-5 p-b-5">
+                            <form class="login100-form validate-form">
+                                <span>
+                                    <center><img src="images/lapis/login.png" width="50%"></center>
+                                </span>
+
+                                <div class="wrap-input100 validate-input m-t-15 m-b-15" data-validate="Enter email">
+                                    <input class="input100" type="text" name="email" id="email">
+                                    <span class="focus-input100" data-placeholder="Email"></span>
+                                </div>
+
+                                <div class="wrap-input100 validate-input m-b-50" data-validate="Enter password">
+                                    <input class="input100" type="password" name="pass" id="pass">
+                                    <span class="focus-input100" data-placeholder="Password"></span>
+                                </div>
+
+                                <div class="container-login100-form-btn">
+                                    <button class="login100-form-btn" id="login">
+                                        Login
+                                    </button>
+                                </div>
+
+                                <ul class="login-more p-t-50">
+                                    <li class="m-b-8">
+                                                <span class="txt1">
+                                                    Forgot
+                                                </span>
+
+                                        <a href="forgotpassword.html" class="txt2">
+                                            Password?
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                                <span class="txt1">
+                                                    Don`t have an account?
+                                                </span>
+
+                                        <a href="signup.html" class="txt2">
+                                            Sign up
+                                        </a>
+                                    </li>
+                                </ul>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div> <!-- END container -->
+
+        <div class="site-cache" id="site-cache"></div>
+
+
+<script src="js/jquery-1.11.1.js"></script>
+<script src="js/index.js"></script>
+
+<!--===============================================================================================-->
+<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
+
+<script src="js/main.js"></script>
+
+<script>
+    $(document).ready(function (e) {
+
+        document.getElementById("email").value = localStorage.getItem("email");
+
+    });
+
+    //Login Function
+    $("#login").click(function () {
+
+        var email = document.getElementById("email").value;
+        var password = document.getElementById("pass").value;
+        localStorage.setItem("email", email);
+
+        if ($.trim(email).length > 0 & $.trim(password).length > 0) {
+
+            $.ajax({
+                type: 'GET',	//Request method: GET, POST
+                url: 'http://gemelligiuntinihci.altervista.org/myPHP/login.php',  //Where to send the data
+                crossDomain: true,
+                cache: false,
+                data: {email, password},
+                success: function (data) {
+                    /* first login professor */
+                    if (data == "00") {
+                        window.location.href = "professor/first_login/teaching.html";
+                    }
+                    /* normal login professor */
+                    else if (data == "01") {
+                        window.location.href = "professor/homepage.html";
+                    }
+                    /* first login student */
+                    else if (data == "10") {
+                        window.location.href = "student/first_login/general_info.html";
+                    } else if (data == "11") {
+                        window.location.href = "student/homepage.html";
+                    } else if (data == "failed") {
+                        alert("Login error");
+
+                    } else if (data == "verify") {
+                        window.location.href = "verifyEmail.html";
+                    }
+                }
+            });
+        }
+        return false;
+
+    });
+</script>
+
+
+</body>
+</html>
